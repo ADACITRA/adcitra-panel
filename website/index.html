@@ -99,7 +99,7 @@ footer p{color:var(--text2);font-size:12px;margin:3px 0}
   section{padding:64px 16px}
   .beacon-wrap{display:none}
 }
-.icon [data-lucide]{color:var(--blue);filter:drop-shadow(0 0 6px rgba(0,212,255,.3))}.card:hover [data-lucide]{filter:drop-shadow(0 0 12px rgba(0,212,255,.5))}.icon svg{width:32px;height:32px;display:inline-block;vertical-align:middle}.card .icon svg{width:28px;height:28px}.feature-tag{display:inline-block;padding:2px 8px;background:rgba(245,158,11,.12);border-radius:4px;font-size:11px;color:#fbbf24;margin-top:8px}</style>
+.feature-list{max-width:820px;margin:0 auto;padding:0 20px}.feature-row{display:flex;gap:20px;align-items:flex-start;padding:28px 0;border-bottom:1px solid rgba(255,255,255,.04);transition:all .3s}.feature-row:last-child{border-bottom:none}.feature-icon{flex-shrink:0;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(0,212,255,.06);border-radius:10px;border:1px solid rgba(0,212,255,.1);transition:all .3s}.feature-row:hover .feature-icon{border-color:rgba(0,212,255,.3);background:rgba(0,212,255,.1)}.feature-icon [data-lucide]{width:22px;height:22px;color:var(--blue)}.feature-content h3{font-size:1.05rem;font-weight:600;margin-bottom:6px}.feature-content p{font-size:.88rem;color:var(--text2);line-height:1.7;max-width:580px}.icon svg{width:32px;height:32px;display:inline-block;vertical-align:middle}.card .icon svg{width:28px;height:28px}.feature-tag{display:inline-block;padding:2px 8px;background:rgba(245,158,11,.12);border-radius:4px;font-size:11px;color:#fbbf24;margin-top:8px}</style>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
 <body>
@@ -152,14 +152,32 @@ footer p{color:var(--text2);font-size:12px;margin:3px 0}
 
 <!-- Features -->
 <section id="features">
-<div class="section-title reveal"><h2>部署 · 运维 · 管理</h2><p>一个平台，全栈覆盖</p></div>
-<div class="card-grid">
-  <div class="card reveal"><div class="icon"><i data-lucide="terminal" style="width:100%;height:100%"></i></div><h3>adcitra deploy</h3><p>一行命令部署任何应用。自动检测框架、生成nginx配置、创建数据库。支持 Laravel/Django/Next.js 等9种框架。</p></div>
-  <div class="card reveal"><div class="icon"><i data-lucide="git-branch" style="width:100%;height:100%"></i></div><h3>Git 自动部署</h3><p>连接 GitHub webhook，推送即部署。非 main 分支自动创建预览环境。自动预览环境，你拥有全部。</p></div>
-  <div class="card reveal"><div class="icon"><i data-lucide="server" style="width:100%;height:100%"></i></div><h3>服务器管理</h3><p>网站/数据库/Docker/SSL/防火墙/文件 — 全套能力。300+ 应用一键安装，Nginx/MySQL/PHP 深度管理。</p></div>
-  <div class="card reveal"><div class="icon"><i data-lucide="brain" style="width:100%;height:100%"></i></div><h3>AI 自然语言运维</h3><p>"网站访问慢帮我看看" — AI 自动诊断 CPU/内存/磁盘/网络。不点按钮，说人话就行。</p></div>
-  <div class="card reveal"><div class="icon"><i data-lucide="refresh-ccw" style="width:100%;height:100%"></i></div><h3>一键迁移</h3><p>从其他面板无缝迁移。网站/数据库/FTP/SSL 全部自动转换。其他面板不敢做这个功能，我们做。</p></div>
-  <div class="card reveal"><div class="icon"><i data-lucide="zap" style="width:100%;height:100%"></i></div><h3>极简模式</h3><p>面板占用 < 50MB。适合 512MB 低配 VPS、树莓派。友商越做越臃肿，我们反着来。</p></div>
+<div class="section-title reveal"><h2>部署 · 运维 · 管理</h2><p>一个平台，六项核心能力</p></div>
+<div class="feature-list">
+  <div class="feature-row reveal">
+    <div class="feature-icon"><i data-lucide="terminal" style="width:22px;height:22px"></i></div>
+    <div class="feature-content"><h3>adcitra deploy</h3><p>一行命令部署任何应用。自动检测框架、生成nginx配置、创建数据库。支持 Laravel/Django/Next.js 等9种框架。</p></div>
+  </div>
+  <div class="feature-row reveal">
+    <div class="feature-icon"><i data-lucide="git-branch" style="width:22px;height:22px"></i></div>
+    <div class="feature-content"><h3>Git 自动部署</h3><p>连接 GitHub webhook，推送即部署。非 main 分支自动创建预览环境，提前验证变更。</p></div>
+  </div>
+  <div class="feature-row reveal">
+    <div class="feature-icon"><i data-lucide="server" style="width:22px;height:22px"></i></div>
+    <div class="feature-content"><h3>服务器管理</h3><p>网站/数据库/Docker/SSL/防火墙/文件 — 全套运维能力。300+ 应用一键安装，Nginx/MySQL/PHP 深度管理。</p></div>
+  </div>
+  <div class="feature-row reveal">
+    <div class="feature-icon"><i data-lucide="brain" style="width:22px;height:22px"></i></div>
+    <div class="feature-content"><h3>AI 自然语言运维</h3><p>说人话就能管理服务器。网站访问慢帮我看看 — AI 自动诊断 CPU/内存/磁盘/网络。</p></div>
+  </div>
+  <div class="feature-row reveal">
+    <div class="feature-icon"><i data-lucide="refresh-ccw" style="width:22px;height:22px"></i></div>
+    <div class="feature-content"><h3>一键迁移</h3><p>从其他面板无缝迁移到灯塔。网站/数据库/FTP/SSL 全部自动转换，路径零手动操作。</p></div>
+  </div>
+  <div class="feature-row reveal">
+    <div class="feature-icon"><i data-lucide="zap" style="width:22px;height:22px"></i></div>
+    <div class="feature-content"><h3>极简模式</h3><p>面板内存占用 < 50MB。适合 512MB 低配 VPS、树莓派、ARM 设备，友商越做越臃肿，我们反着来。</p></div>
+  </div>
 </div>
 </section>
 
