@@ -1,0 +1,40 @@
+﻿{
+  "version": "1.0",
+  "last_updated": "2026-06-18",
+  "password_policy": {
+    "min_length": 8,
+    "require_uppercase": true,
+    "require_lowercase": true,
+    "require_digit": true,
+    "require_special_char": true,
+    "max_age_days": 90,
+    "history_count": 5
+  },
+  "login_policy": {
+    "max_attempts": 5,
+    "lock_minutes": 30,
+    "session_timeout_minutes": 60,
+    "enforce_2fa": false,
+    "allowed_ips": []
+  },
+  "ssh_policy": {
+    "disable_root_login": false,
+    "change_default_port": true,
+    "max_auth_tries": 3,
+    "allow_password_login": true,
+    "allow_key_login": true
+  },
+  "firewall": {
+    "default_policy": "allow",
+    "rate_limit_enabled": true,
+    "rate_limit_requests": 100,
+    "rate_limit_period_seconds": 60,
+    "block_duration_minutes": 60
+  },
+  "audit": {
+    "enabled": true,
+    "log_admin_actions": true,
+    "log_api_calls": true,
+    "retention_days": 90
+  }
+}

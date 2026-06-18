@@ -1,0 +1,40 @@
+﻿{
+  "version": "1.0",
+  "retention_days": 7,
+  "auto_backup": false,
+  "backup_time": "03:00",
+  "compress": true,
+  "cloud": {
+    "enabled": false,
+    "provider": "s3",
+    "s3": {
+      "endpoint": "",
+      "access_key": "",
+      "secret_key": "",
+      "bucket": "",
+      "region": "auto"
+    },
+    "oss": {
+      "endpoint": "",
+      "access_key": "",
+      "secret_key": "",
+      "bucket": ""
+    },
+    "cos": {
+      "region": "",
+      "secret_id": "",
+      "secret_key": "",
+      "bucket": ""
+    },
+    "qiniu": {
+      "access_key": "",
+      "secret_key": "",
+      "bucket": "",
+      "domain": ""
+    }
+  },
+  "local": {
+    "path": "/www/backup",
+    "max_backups": 30
+  }
+}

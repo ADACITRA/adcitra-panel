@@ -1,7 +1,7 @@
 #!/www/adcitra/panel/pyenv/bin/python3
 # coding: utf-8
 """
-BT-CLI - 灯塔面板命令行管理工具
+AdCtira CLI - 灯塔面板命令行管理工具
 用于通过命令行方式管理灯塔面板的网站、数据库、FTP等资源
 """
 
@@ -1287,7 +1287,7 @@ class InteractiveMenu:
         """显示主菜单"""
         while True:
             print("\n" + "="*60)
-            print(Colors.header("     BT-CLI 灯塔面板命令行管理工具 v1.0.0"))
+    print(Colors.header("     AdCtira CLI 灯塔面板命令行管理工具 v12.0.0"))
             print("="*60)
             print()
             print(Colors.info("  [ 操作说明 ]"))
