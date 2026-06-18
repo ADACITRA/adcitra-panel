@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AdCtira灯塔 v12 — 自托管部署平台</title>
+<title>AdCtira灯塔 v12 — 全栈部署平台</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--amber:#f59e0b;--amber-l:#fbbf24;--navy:#020617;--slate:#334155;--slate-l:#64748b}
@@ -105,9 +105,9 @@ footer p{color:var(--slate-l);font-size:13px;margin:4px 0}
 <!-- Hero -->
 <section class="hero">
 <div style="max-width:800px">
-  <div class="badge">AdCtira v12.0 - 自托管部署平台</div>
+  <div class="badge">AdCtira v12.0 - 全栈部署平台</div>
   <h1>让服务器部署<br>像 <span>灯塔光束</span> 一样直达</h1>
-  <p>一行命令部署任何应用到自有服务器。<br>自托管 Vercel/Heroku + 宝塔级服务器管理。<br>全球首创 - 没有第二个产品做到。</p>
+  <p>一行命令部署任何应用到自有服务器。<br>从代码到上线，一个平台搞定。<br>部署 + 运维 + 管理，全面覆盖。</p>
   <div class="btns">
     <a href="#install" class="btn-p">免费开始</a>
     <a href="#features" class="btn-s">了解功能</a>
@@ -120,32 +120,11 @@ footer p{color:var(--slate-l);font-size:13px;margin:4px 0}
 <div class="section-title fade-in"><h2>一秒部署，一生拥有</h2><p>自托管意味着你永远拥有你的服务器和数据</p></div>
 <div class="glass-grid">
   <div class="glass fade-in"><div class="icon">&#x1F680;</div><h3>adcitra deploy</h3><p>一行命令，从代码到上线。自动检测框架、生成nginx配置、创建数据库、配置SSL。支持 Laravel/Django/Next.js 等9种框架。</p></div>
-  <div class="glass fade-in"><div class="icon">&#x1F525;</div><h3>Git 自动部署</h3><p>连接 GitHub webhook，推送即部署。非 main 分支自动创建预览环境。Vercel 体验，你拥有服务器。</p></div>
+  <div class="glass fade-in"><div class="icon">&#x1F525;</div><h3>Git 自动部署</h3><p>连接 GitHub webhook，推送即部署。非 main 分支自动创建预览环境。自动预览环境，你拥有服务器。</p></div>
   <div class="glass fade-in"><div class="icon">&#x1F3D7;</div><h3>服务器管理</h3><p>网站/数据库/Docker/SSL/防火墙/文件 - 全套运维能力。300+ 应用一键安装，Nginx/MySQL/PHP 深度管理。</p></div>
   <div class="glass fade-in"><div class="icon">&#x1F916;</div><h3>AI 自然语言运维</h3><p>"网站访问慢帮我看看" - AI 自动诊断 CPU/内存/磁盘/网络。不点按钮，说人话就行。</p></div>
-  <div class="glass fade-in"><div class="icon">&#x1F504;</div><h3>一键迁移</h3><p>从宝塔面板无缝迁移到灯塔。网站/数据库/FTP/SSL 全部自动转换路径。宝塔不敢做这个功能，我们做。</p></div>
+  <div class="glass fade-in"><div class="icon">&#x1F504;</div><h3>一键迁移</h3><p>从其他面板无缝迁移到灯塔。网站/数据库/FTP/SSL 全部自动转换路径。其他面板不敢做这个功能，我们做。</p></div>
   <div class="glass fade-in"><div class="icon">&#x26A1;</div><h3>极简模式</h3><p>面板占用 < 50MB。适合 512MB 低配 VPS、树莓派。友商越做越臃肿，我们反着来。</p></div>
-</div>
-</section>
-
-<!-- Compare -->
-<section style="background:rgba(255,255,255,.02)">
-<div class="section-title fade-in"><h2>唯一覆盖全栈的产品</h2><p>从部署到运维，一个平台搞定</p></div>
-<div class="compare-wrap fade-in">
-<table class="compare">
-<thead><tr><th></th><th class="us">AdCtira</th><th>Vercel</th><th>宝塔</th><th>1Panel</th></tr></thead>
-<tbody>
-<tr><td>自托管</td><td class="us check">&#x2713;</td><td>&#x2716;</td><td class="check">&#x2713;</td><td class="check">&#x2713;</td></tr>
-<tr><td>一行命令部署</td><td class="us check">&#x2713;</td><td class="check">&#x2713;</td><td>&#x2716;</td><td>&#x2716;</td></tr>
-<tr><td>Git 自动部署</td><td class="us check">&#x2713;</td><td class="check">&#x2713;</td><td>&#x2716;</td><td>&#x2716;</td></tr>
-<tr><td>预览部署</td><td class="us check">&#x2713;</td><td class="check">&#x2713;</td><td>&#x2716;</td><td>&#x2716;</td></tr>
-<tr><td>服务器面板</td><td class="us check">&#x2713;</td><td>&#x2716;</td><td class="check">&#x2713;</td><td class="check">&#x2713;</td></tr>
-<tr><td>AI 自然语言运维</td><td class="us check">&#x2713;</td><td>&#x2716;</td><td>&#x2716;</td><td>&#x2716;</td></tr>
-<tr><td>一键迁移</td><td class="us check">&#x2713;</td><td>&#x2716;</td><td>&#x2716;</td><td>&#x2716;</td></tr>
-<tr><td>内存占用</td><td class="us">< 50MB</td><td>N/A</td><td>>200MB</td><td>>100MB</td></tr>
-<tr><td>开源协议</td><td class="us">MIT</td><td>闭源</td><td>专有</td><td>GPL3</td></tr>
-</tbody>
-</table>
 </div>
 </section>
 
@@ -194,3 +173,4 @@ function switchTab(el,id){document.querySelectorAll('.install-tab').forEach(func
 </script>
 </body>
 </html>
+
