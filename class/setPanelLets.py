@@ -33,7 +33,7 @@ class setPanelLets:
         public.writeFile('ssl/input.pl','True')
         return public.returnMsg(True,'证书已保存!')
 
-    # 检查是否存在站点aapanel主机名站点
+    # 检查是否存在站点adcitra主机名站点
     def __check_host_name(self, domain):
         sql = db.Sql()
         path = public.M('sites').where('name=?', (domain,)).getField('path')

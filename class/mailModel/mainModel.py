@@ -3,10 +3,10 @@
 # +-------------------------------------------------------------------
 # | AdCtira
 # +-------------------------------------------------------------------
-# | Copyright (c) 2015-2099 AdCtira(www.aapanel.com) All rights reserved.
+# | Copyright (c) 2015-2099 AdCtira(www.adcitra.cn) All rights reserved.
 # +-------------------------------------------------------------------
-# | Author: wzjie <wzj@aapanel.com>
-# | Author: zhwen <zhw@aapanel.com>
+# | Author: wzjie <wzj@adcitra.com>
+# | Author: zhwen <zhw@adcitra.com>
 # +-------------------------------------------------------------------
 
 # +--------------------------------------------------------------------
@@ -3606,7 +3606,7 @@ local_name %s {
     # def get_multiple_certificate(self, domain):
     #     """
     #         @name 获取某个域名的证书内容
-    #         @author zhwen<zhw@aapanel.com>
+    #         @author zhwen<zhw@adcitra.com>
     #         @param domain 需要获取的域名
     #     """
     #     # domain = args.domain
@@ -4014,7 +4014,7 @@ local_name %s {
         filename = args.filename
         tmp = filename.split('|')
         local_file = tmp[0]
-        remote_file = tmp[1].format(download_conf_url="http://node.aapanel.com")
+        remote_file = tmp[1].format(download_conf_url="http://node.adcitra.cn")
         data = public.readFile("/www/adcitra/panel/plugin/mail_sys/services_file.txt")
         if not data:
             return self.return_msg(public.returnMsg(False, "Get source file error!"))
@@ -5069,7 +5069,7 @@ local_name %s {
             "install": "",
             # "download": "{Download}/roundcubemail.zip",
             # "download": "{}/install/plugin/mail_sys/roundcubemail.zip".format(public.get_url()),
-            "download": "https://node.aapanel.com/install/package/roundcubemail.zip",
+            "download": "https://node.adcitra.cn/install/package/roundcubemail.zip",
             # "download": "http://127.0.0.1/roundcube.zip",
             "password": "",
             "config": "/config/config.inc.php",

@@ -168,7 +168,7 @@ class ThemeConfigManager:
     FIELD_VALIDATORS = {
         "theme.preset": FieldValidator(str, required=True, choices=["light", "dark"]),
         "theme.color": FieldValidator(str, required=True, pattern=r"^#[0-9a-fA-F]{3,6}$"),
-        "theme.view": FieldValidator(str, required=True, choices=["default", "aapanel", "compact"]),
+        "theme.view": FieldValidator(str, required=True, choices=["default", "adcitra", "compact"]),
         "sidebar.dark": FieldValidator(bool, required=True),
         "sidebar.color": FieldValidator(str, required=True, pattern=r"^#[0-9a-fA-F]{3,6}$"),
         "sidebar.opacity": FieldValidator(int, required=True, min_val=0, max_val=100),

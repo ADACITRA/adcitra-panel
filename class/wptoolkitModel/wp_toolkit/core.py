@@ -492,7 +492,7 @@ class wp_version:
                 # 计算文件校验码
                 cks = [public.FileMd5(fname)]
 
-                # 当计算到wp-includes/default-filters.php时，多计算一次被aapanel修改后的校验值
+                # 当计算到wp-includes/default-filters.php时，多计算一次被adcitra修改后的校验值
                 if file_rel == 'wp-includes/default-filters.php':
                     with open(fname, 'r') as fp:
                         tmp_str = fp.read()
@@ -3542,7 +3542,7 @@ class wpbackup(wpmgr):
 
         return public.aap_t_simple_result(True, public.lang('Backup file is well'))
 
-    # aapanel WP备份包完整性校验
+    # adcitra WP备份包完整性校验
     @classmethod
     def aap_bak_integrity_check(cls, tmp_path: str) -> public.aap_t_simple_result:
         if not os.path.exists(tmp_path):
@@ -3567,7 +3567,7 @@ class wpbackup(wpmgr):
 
         return public.aap_t_simple_result(True, public.lang('Backup file is well formed'))
 
-    # 从aapanel WP备份文件中读取网站元信息
+    # 从adcitra WP备份文件中读取网站元信息
     @classmethod
     def get_metadata_with_aap_bak(cls, bak_file: str) -> public.aap_t_simple_result:
         # 检查备份文件
@@ -3599,7 +3599,7 @@ class wpbackup(wpmgr):
             # 删除临时目录
             shutil.rmtree(tmp_path)
 
-    # 通过aapanel WP备份文件部署WP站点
+    # 通过adcitra WP备份文件部署WP站点
     @classmethod
     def wp_deploy_with_aap_bak(cls, args: public.dict_obj) -> public.aap_t_simple_result:
         #
@@ -3639,7 +3639,7 @@ class wpbackup(wpmgr):
             # 解压备份文件到临时目录下
             shutil.unpack_archive(bak_file, tmp_path, 'zip')
 
-            # 检查aapanel WP备份包完整性
+            # 检查adcitra WP备份包完整性
             ok, msg = cls.aap_bak_integrity_check(tmp_path)
 
             if not ok:
@@ -5241,20 +5241,20 @@ class wpmgr_remote:
 
         return resp.ok
 
-    # 远程安装并激活aapanel-wp-toolkit
+    # 远程安装并激活adcitra-wp-toolkit
     def setup_aapenel_wp_toolkit(self):
         # 下载插件
         self._log('Downloading plugin...')
 
-        plugin_file_path = '{}/temp/aapanel-wp-toolkit.zip'.format(public.get_panel_path())
+        plugin_file_path = '{}/temp/adcitra-wp-toolkit.zip'.format(public.get_panel_path())
 
         if not os.path.exists(plugin_file_path):
-            resp = requests.get('{}/install/src/aapanel-wp-toolkit.zip'.format(public.OfficialDownloadBase()), verify=False, timeout=120)
+            resp = requests.get('{}/install/src/adcitra-wp-toolkit.zip'.format(public.OfficialDownloadBase()), verify=False, timeout=120)
 
             if not resp.ok:
                 # public.print_log(resp.text)
                 self._log('Download plugin failed: {}'.format(resp.status_code))
-                raise public.HintException('Not found aapanel-wp-toolkit')
+                raise public.HintException('Not found adcitra-wp-toolkit')
 
             with open(plugin_file_path, 'wb') as fp:
                 fp.write(resp.content)
@@ -5288,7 +5288,7 @@ class wpmgr_remote:
         if not resp.ok:
             self._log('Plugin upload failed: {}'.format(resp.status_code))
             # public.print_log('{} {}'.format(resp.status_code, resp.text))
-            raise public.HintException(public.lang('Setup aapanel-wp-toolkit failed: {}', resp.status_code))
+            raise public.HintException(public.lang('Setup adcitra-wp-toolkit failed: {}', resp.status_code))
 
         self._log('Plugin uploaded to site, start activating...')
         self._log('Finding activation url in page...')
@@ -5307,7 +5307,7 @@ class wpmgr_remote:
                 self._log('Activation url not found in page')
                 with open('/tmp/wp_upload_plugin.html', 'w') as fp:
                     fp.write(resp.text)
-                raise public.HintException(public.lang('Setup aapanel-wp-toolkit failed: not found activation url'))
+                raise public.HintException(public.lang('Setup adcitra-wp-toolkit failed: not found activation url'))
 
             override_url = '{}/wp-admin/{}'.format(self.__wp_site_url, html.unescape(m.group(1)))
 
@@ -5320,7 +5320,7 @@ class wpmgr_remote:
                 self._log('overriding plugin failed: {}'.format(resp.status_code))
                 with open('/tmp/wp_upload_plugin.html', 'w') as fp:
                     fp.write(resp.text)
-                raise public.HintException(public.lang('Setup aapanel-wp-toolkit failed: failed to override plugin'))
+                raise public.HintException(public.lang('Setup adcitra-wp-toolkit failed: failed to override plugin'))
 
             # 覆盖安装成功，再次尝试匹配插件激活url
             m = re.search(r'href="(plugins\.php\?action=activate&amp;plugin=[^"]+)"', resp.text)
@@ -5341,11 +5341,11 @@ class wpmgr_remote:
             if not resp.ok:
                 self._log('Plugin activation failed: {}'.format(resp.status_code))
                 # public.print_log('{} {}'.format(resp.status_code, resp.text))
-                raise public.HintException(public.lang('Activate aapanel-wp-toolkit failed: {}', resp.status_code))
+                raise public.HintException(public.lang('Activate adcitra-wp-toolkit failed: {}', resp.status_code))
 
             self._log('Plugin activation success, getting wordpress information...')
 
-        # 通过访问aapanel-wp-toolkit插件，获取security_key并存储
+        # 通过访问adcitra-wp-toolkit插件，获取security_key并存储
         resp = self.__request_session.get(self.__wp_site_url, params={
             '_aap_action': 'security_key_info',
         }, verify=False, timeout=60)
@@ -5353,13 +5353,13 @@ class wpmgr_remote:
         if not resp.ok or resp.headers.get('content-type', '').find('application/json') < 0:
             self._log('Get wordpress information failed: {}'.format(resp.status_code))
             # public.print_log('{} {}'.format(resp.status_code, resp.text))
-            raise public.HintException(public.lang('Setup aapanel-wp-toolkit failed: activate failed'))
+            raise public.HintException(public.lang('Setup adcitra-wp-toolkit failed: activate failed'))
 
         ret = resp.json()
 
         if not ret.get('success', False):
             public.print_log(ret)
-            raise public.HintException(public.lang('Cannot get security key from aapanel-wp-toolkit'))
+            raise public.HintException(public.lang('Cannot get security key from adcitra-wp-toolkit'))
 
         security_key_info = ret.get('data', {})
         self.__security_key = security_key_info.get('security_key')
@@ -5384,7 +5384,7 @@ class wpmgr_remote:
 
         if not resp.ok or resp.headers.get('content-type', '').find('application/json') < 0:
             # public.print_log('{} {}'.format(resp.status_code, resp.text))
-            raise public.HintException('Request to aapanel-wp-toolkit failed: {}'.format(self.get_error_message(resp)))
+            raise public.HintException('Request to adcitra-wp-toolkit failed: {}'.format(self.get_error_message(resp)))
 
         return resp.json().get('data')
 

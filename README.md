@@ -11,7 +11,7 @@
 
 | 特性 | AdCtira灯塔 12.0 | 宝塔官方 11.8 | 1Panel |
 |------|:-:|:-:|:-:|
-| 开源协议 | LGPL v3 | 部分开源 | GPL v3 |
+| 开源协议 | 专有许可 | 部分开源 | GPL v3 |
 | 开发语言 | Python/Flask | Python/Flask | Go |
 | GitHub Stars | - | 4.5K | 35.9K |
 | Docker 部署 | 原生支持 | 不支持 | 原生支持 |
@@ -58,7 +58,7 @@
 | **Web 服务器** | Nginx / Apache / OpenLiteSpeed |
 | **任务调度** | Python 多线程 + Linux crontab |
 | **部署方式** | 原生安装 / Docker 容器化 |
-| **授权协议** | LGPL v3 |
+| **授权协议** | 专有许可 |
 
 ## 快速开始
 
@@ -130,10 +130,11 @@ AdCtira灯塔/
 ## 开源许可
 
 本项目基于 **LGPL v3** 开源协议发布（保留原 copyright）。
-原项目: [aaPanel/BaoTa](https://github.com/aaPanel/BaoTa)（宝塔Linux面板）
+原项目: [aaPanel/BaoTa](https://github.com/adcitra/BaoTa)（宝塔Linux面板）
 
 本复刻版本在保留原 LGPL 协议的基础上进行了品牌重命名和功能升级。
 
 ---
 
 > **AdCtira灯塔 v12.0.0** — 让服务器管理像灯塔一样明亮。
+

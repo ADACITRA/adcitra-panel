@@ -42,7 +42,7 @@ class main():
             )[0]
 
             if "The key's randomart image is:" not in result:
-                return public.ReturnMsg(False,"The aapanel_key key generation failed. Please try again: {} ".format(result))
+                return public.ReturnMsg(False,"The adcitra_key key generation failed. Please try again: {} ".format(result))
 
             # 修正密钥文件权限
             os.chmod(self._ssh_key, 0o600)

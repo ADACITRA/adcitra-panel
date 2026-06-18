@@ -425,7 +425,7 @@ case "$1" in
                         if [ -z "${ipv4_address}" ];then
                                 ipv4_address=$(curl -4 -sS --connect-timeout 4 -m 5 https://www.adcitra.cn/Api/getIpAddress 2>&1)
                                 if [ -z "${ipv4_address}" ];then
-                                        ipv4_address=$(curl -4 -sS --connect-timeout 4 -m 5 https://www.aapanel.com/api/common/getClientIP 2>&1)
+                                        ipv4_address=$(curl -4 -sS --connect-timeout 4 -m 5 https://api.ipify.org 2>&1)
                                 fi
                         fi
                         IPV4_REGEX="^([0-9]{1,3}\.){3}[0-9]{1,3}$"

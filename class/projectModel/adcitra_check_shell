@@ -54,7 +54,9 @@ class MyEventHandler(pyinotify.ProcessEvent):
             if os.path.exists(self._WEBSHELl_BACK+"/"+md5+".txt"):return False
             import webshell_check
             webshell = webshell_check.webshell_check()
-            res = webshell.upload_file_url2(filename, "http://w-check.bt.cn/check.php")
+            # 已移除: 原宝塔服务器安全检查接口 w-check.bt.cn/check.php
+            # 木马查杀功能仅使用本地检测引擎
+            res = webshell.upload_file_url2(filename, "")
             print(res)
             self.__cache.set(md5, True, 360)
             if not res:return False

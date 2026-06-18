@@ -2304,7 +2304,7 @@ class main(Base):
             for line in data.splitlines():
                 msgid = line.strip()
                 msgid = msgid.strip('<>')
-                # 去掉msgid两边的<> <173224082931.4191130.12787570563193919720@mail.aapanel.store>
+                # 去掉msgid两边的<> <173224082931.4191130.12787570563193919720@mail.adcitra.store>
                 message_ids.add(msgid)
         # else:
         #     public.print_log("文件不存在{}  ".format(task_file_path))
@@ -4258,7 +4258,7 @@ class main(Base):
             return
         else:
             # 拉取文件
-            public.downloadFile('https://node.aapanel.com/mail_sys/unsubscribe.html', unsubscribe_path)
+            public.downloadFile('https://node.adcitra.cn/mail_sys/unsubscribe.html', unsubscribe_path)
 
         # # 记录标记
         # public.writeFile(path, "")

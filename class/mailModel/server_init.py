@@ -3,10 +3,10 @@
 # +-------------------------------------------------------------------
 # | AdCtira
 # +-------------------------------------------------------------------
-# | Copyright (c) 2015-2099 AdCtira(www.aapanel.com) All rights reserved.
+# | Copyright (c) 2015-2099 AdCtira(www.adcitra.cn) All rights reserved.
 # +-------------------------------------------------------------------
-# | Author: wzjie <wzj@aapanel.com>
-# | Author: zhwen <zhw@aapanel.com>
+# | Author: wzjie <wzj@adcitra.com>
+# | Author: zhwen <zhw@adcitra.com>
 # +-------------------------------------------------------------------
 
 # +--------------------------------------------------------------------

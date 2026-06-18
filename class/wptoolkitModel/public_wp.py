@@ -94,7 +94,7 @@ def make_panel_tmp_path_with_context():
 def back_file(file, act=None):
     """
         @name 备份配置文件
-        @author zhwen<zhw@aapanel.com>
+        @author zhwen<zhw@adcitra.com>
         @param file 需要备份的文件
         @param act 如果存在，则备份一份作为默认配置
     """
@@ -104,7 +104,7 @@ def back_file(file, act=None):
     ExecShell("/usr/bin/cp -p {0} {1}".format(file, file + file_type))
 
 def OfficialApiBase():
-    return 'https://www.aapanel.com'
+    return 'https://www.adcitra.cn'
 
 class HintException(Exception):
     pass
@@ -1668,7 +1668,7 @@ def S(table_name: typing.Optional[str] = None, db_name: str = 'default'):
     return query
 
 def OfficialDownloadBase():
-    return 'https://node.aapanel.com'
+    return 'https://node.adcitra.cn'
 
 def build_multipart(data: typing.Dict) -> aap_t_http_multipart:
     boundary = b'----AapanelFormBoundary' + GetRandomString(16).encode('utf-8')
@@ -1981,7 +1981,7 @@ def check_password(password):
 def restore_file(file, act=None):
     """
         @name 还原配置文件
-        @author zhwen<zhw@aapanel.com>
+        @author zhwen<zhw@adcitra.com>
         @param file 需要还原的文件
         @param act 如果存在，则还原默认配置
     """

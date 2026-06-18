@@ -219,7 +219,7 @@ get_node_url(){
 	fi
 
 	log_info "Selected download node..."
-	nodes=(https://dg2.adcitra.cn https://download.adcitra.cn https://ctcc1-node.adcitra.cn https://cmcc1-node.adcitra.cn https://ctcc2-node.adcitra.cn https://hk1-node.adcitra.cn https://na1-node.adcitra.cn https://jp1-node.adcitra.cn https://cf1-node.aapanel.com https://download.adcitra.cn);
+	nodes=(https://dg2.adcitra.cn https://download.adcitra.cn https://ctcc1-node.adcitra.cn https://cmcc1-node.adcitra.cn https://ctcc2-node.adcitra.cn https://hk1-node.adcitra.cn https://na1-node.adcitra.cn https://jp1-node.adcitra.cn https://cf1-node.adcitra.cn https://download.adcitra.cn);
 
   CN_CHECK=$(curl -sS --connect-timeout 10 -m 10 https://api.adcitra.cn/api/isCN)
   if [ "${CN_CHECK}" == "True" ];then
@@ -227,9 +227,9 @@ get_node_url(){
   else
       PING6_CHECK=$(ping6 -c 2 -W 2 download.adcitra.cn &> /dev/null && echo "yes" || echo "no")
       if [ "${PING6_CHECK}" == "yes" ];then
-          nodes=(https://dg2.adcitra.cn https://download.adcitra.cn https://cf1-node.aapanel.com);
+          nodes=(https://dg2.adcitra.cn https://download.adcitra.cn https://cf1-node.adcitra.cn);
       else
-          nodes=(https://cf1-node.aapanel.com https://download.adcitra.cn https://na1-node.adcitra.cn https://jp1-node.adcitra.cn https://dg2.adcitra.cn);
+          nodes=(https://cf1-node.adcitra.cn https://download.adcitra.cn https://na1-node.adcitra.cn https://jp1-node.adcitra.cn https://dg2.adcitra.cn);
       fi
   fi
 
@@ -241,7 +241,7 @@ get_node_url(){
 	touch $tmp_file2
 	for node in ${nodes[@]};
 	do
-      if [ "${node}" == "https://cf1-node.aapanel.com" ];then
+      if [ "${node}" == "https://cf1-node.adcitra.cn" ];then
           NODE_CHECK=$(curl --connect-timeout 3 -m 3 2>/dev/null -w "%{http_code} %{time_total}" ${node}/1net_test|xargs)
       else
           NODE_CHECK=$(curl --connect-timeout 3 -m 3 2>/dev/null -w "%{http_code} %{time_total}" ${node}/net_test|xargs)

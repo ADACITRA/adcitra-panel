@@ -53,13 +53,13 @@ class CreateSSLMain:
         domains = self.get_host_all()
         pdata = {
             "action":"get_domain_cert",
-            "company":"aapanel.com",
+            "company":"adcitra.com",
             "domain":','.join(domains),
             "uid":userInfo['uid'],
             "access_key":userInfo['access_key'],
             "panel":1
         }
-        cert_api = 'https://api.aapanel.com/aapanel_cert'
+        cert_api = 'https://api.adcitra.cn/adcitra_cert'
         result = json.loads(public.httpPost(cert_api,{'data': json.dumps(pdata)}))
         if 'status' in result:
             if result['status']:

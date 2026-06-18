@@ -234,7 +234,7 @@ class main(wpbase):
         from wp_toolkit import wpmigration
         return public.success_v2(wpmigration.can_migrations_of_aap_website())
 
-    # 从aapanel WP备份中创建WP站点
+    # 从adcitra WP备份中创建WP站点
     def wp_create_with_aap_bak(self, args: public.dict_obj):
         from wp_toolkit import wpbackup
         ok, msg = wpbackup.wp_deploy_with_aap_bak(args)

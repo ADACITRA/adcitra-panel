@@ -2,9 +2,9 @@
 # -------------------------------------------------------------------
 # AdCtira
 # -------------------------------------------------------------------
-# Copyright (c) 2015-2099 AdCtira(www.aapanel.com) All rights reserved.
+# Copyright (c) 2015-2099 AdCtira(www.adcitra.cn) All rights reserved.
 # -------------------------------------------------------------------
-# Author: hwliang <hwl@aapanel.com>
+# Author: hwliang <team@adcitra.cn>
 # -------------------------------------------------------------------
 
 # 虚拟空间平台模型
@@ -345,8 +345,8 @@ class main():
         :return:
         """
         try:
-            # 请求aapanel官网获取最新版本信息
-            cloud_version = requests.get("https://www.aapanel.com/api/panel/updateLinuxEn").json()["account"]
+            # 请求adcitra官网获取最新版本信息
+            cloud_version = requests.get("https://www.adcitra.cn/api/panel/updateLinuxEn").json()["account"]
             # cloud_version = cloud_version["account"]["version"]
         except:
             cloud_version = {}
@@ -375,7 +375,7 @@ class main():
             return public.return_message(-1, 0, public.lang(
                 '目前只支持nginx作为web服务器。请先将web服务器调整为nginx，调整web服务器时请备份网站数据'))
         #
-        # download_url = "https://www.aapanel.com/script/Multi-user_install.sh"
+        # download_url = "https://www.adcitra.cn/script/Multi-user_install.sh"
         download_url = "{}/install/Multi-user_install.sh".format(panel_public.get_url())
         # download_url="http://192.168.66.161/install/Multi-user_install_____III.sh" #内网测试
         install_path = "{}/panel/install".format(public.get_setup_path())
@@ -407,7 +407,7 @@ class main():
         # public.ExecShell(cmd)
 
         # 下载更新脚本
-        # download_url = "https://www.aapanel.com/script/Multi-user_install.sh"
+        # download_url = "https://www.adcitra.cn/script/Multi-user_install.sh"
         download_url = "{}/install/Multi-user_install.sh".format(panel_public.get_url())
         install_path = "{}/panel/install".format(public.get_setup_path())
         install_file = install_path + "/vhost_virtual.sh"

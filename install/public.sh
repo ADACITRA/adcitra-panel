@@ -29,14 +29,14 @@ if [ -f "/www/adcitra/panel/install/d_node.pl" ];then
 fi
 
 get_node_url(){
-	nodes=(https://dg2.adcitra.cn https://download.adcitra.cn https://ctcc1-node.adcitra.cn https://cmcc1-node.adcitra.cn https://ctcc2-node.adcitra.cn https://hk1-node.adcitra.cn https://na1-node.adcitra.cn https://jp1-node.adcitra.cn https://cf1-node.aapanel.com);
+	nodes=(https://dg2.adcitra.cn https://download.adcitra.cn https://ctcc1-node.adcitra.cn https://cmcc1-node.adcitra.cn https://ctcc2-node.adcitra.cn https://hk1-node.adcitra.cn https://na1-node.adcitra.cn https://jp1-node.adcitra.cn https://cf1-node.adcitra.cn);
 
 	if [ -f "/www/adcitra/panel/data/domestic_ip.pl" ];then
 		nodes=(https://dg2.adcitra.cn https://download.adcitra.cn https://ctcc1-node.adcitra.cn https://cmcc1-node.adcitra.cn https://ctcc2-node.adcitra.cn https://hk1-node.adcitra.cn);
 	fi
 
 	if [ -f "/www/adcitra/panel/data/foreign_ip.pl" ];then
-		nodes=(https://cf1-node.aapanel.com https://dg2.adcitra.cn https://na1-node.adcitra.cn  https://jp1-node.adcitra.cn https://download.adcitra.cn https://ctcc1-node.adcitra.cn  https://ctcc2-node.adcitra.cn https://hk1-node.adcitra.cn);
+		nodes=(https://cf1-node.adcitra.cn https://dg2.adcitra.cn https://na1-node.adcitra.cn  https://jp1-node.adcitra.cn https://download.adcitra.cn https://ctcc1-node.adcitra.cn  https://ctcc2-node.adcitra.cn https://hk1-node.adcitra.cn);
 	fi
 
 	if [ "$1" ];then
@@ -51,7 +51,7 @@ get_node_url(){
 	touch $tmp_file2
 	for node in ${nodes[@]};
 	do
-		if [ "${node}" == "https://cf1-node.aapanel.com" ];then
+		if [ "${node}" == "https://cf1-node.adcitra.cn" ];then
 			NODE_CHECK=$(curl --connect-timeout 3 -m 3 2>/dev/null -w "%{http_code} %{time_total}" ${node}/1net_test|xargs)
 		else
 			NODE_CHECK=$(curl --connect-timeout 3 -m 3 2>/dev/null -w "%{http_code} %{time_total}" ${node}/net_test|xargs)
