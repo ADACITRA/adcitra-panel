@@ -129,10 +129,10 @@ AdCtira灯塔/
 
 ## 开源许可
 
-本项目基于 **LGPL v3** 开源协议发布（保留原 copyright）。
-原项目: [aaPanel/BaoTa](https://github.com/adcitra/BaoTa)（宝塔Linux面板）
+本项目采用 **MIT 许可证** 发布（详见 [LICENSE.md](LICENSE.md)）。
+原创代码版权归 AdCtira灯塔 Team 所有。
 
-本复刻版本在保留原 LGPL 协议的基础上进行了品牌重命名和功能升级。
+如果您认为本项目的任何部分侵犯了您的合法权益，请提交 Issue 联系我们。
 
 ---
 
