@@ -1,0 +1,8 @@
+﻿{
+  "default": "zh_CN",
+  "languages": [
+    {"name": "zh_CN", "title": "简体中文", "google": "zh-cn"},
+    {"name": "en", "title": "English", "google": "en"},
+    {"name": "ja", "title": "日本語", "google": "ja"}
+  ]
+}

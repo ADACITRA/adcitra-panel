@@ -3767,3 +3767,10 @@ try:
     register_deploy_routes(app)
 except Exception as e:
     pass
+
+# ========================== 多语言模块 ====================
+try:
+    from panelLang import register_lang_routes
+    register_lang_routes(app)
+except Exception as e:
+    pass
