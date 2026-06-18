@@ -1,0 +1,1 @@
+import{n as e,t}from"./adcitra-ui-echarts-runtime-lib.js?v=1780568589";var n={...e,loadEchartsRuntime:t},r=`@adcitra_panel/ui/data/bt-echart/runtime`,i=n;export{r as name,i as provider};

@@ -1,0 +1,1 @@
+import{i as e,t}from"./adcitra-panel-business-runtime-lib.js?v=1780568589";var n={...t,useCreateRouterEach:e},r=`@adcitra_panel/panel-business/router`,i=n;export{r as name,i as provider};

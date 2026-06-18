@@ -1,0 +1,1 @@
+import{it as e,ot as t,st as n}from"./adcitra-panel-business-services-lib.js?v=1780568589";var r={...t,pluginInstallDialog:e,productPaymentDialog:n},i=`@adcitra_panel/panel-business/services/popup`,a=r;export{i as name,a as provider};

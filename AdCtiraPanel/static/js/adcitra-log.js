@@ -1,0 +1,1 @@
+import{St as e,xt as t}from"./adcitra-panel-business-components-lib.js?v=1780568589";var n={...e,default:t},r=`@adcitra_panel/panel-business/components/extension/bt-log/index.vue`,i=n;export{r as name,i as provider};

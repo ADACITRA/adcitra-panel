@@ -1,0 +1,1 @@
+import{n as e,r as t}from"./adcitra-hooks-charts-data-lib.js?v=1780568589";var n={...t,default:e},r=`@adcitra_panel/hooks/charts/data/world`,i=n;export{r as name,i as provider};

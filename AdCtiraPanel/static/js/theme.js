@@ -1,0 +1,1 @@
+import{c as e,l as t}from"./adcitra-panel-business-hooks-lib.js?v=1780568589";var n={...e,useThemeSync:t},r=`@adcitra_panel/panel-business/hooks/tools/theme/index`,i=n;export{r as name,i as provider};

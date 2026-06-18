@@ -1,0 +1,1 @@
+import{f as e,p as t}from"./adcitra-core-lib.js?v=1780568589";var n={...e,formatTime:t},r=`@adcitra_panel/core/date`,i=n;export{r as name,i as provider};

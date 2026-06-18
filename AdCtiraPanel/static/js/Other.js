@@ -1,0 +1,1 @@
+import{a as e,n as t}from"./adcitra-ui-lib.js?v=1780568589";var n={...t,BtDivider:e},r=`@adcitra_panel/ui/other`,i=n;export{r as name,i as provider};

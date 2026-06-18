@@ -1,0 +1,1 @@
+import{Mt as e,Nt as t}from"./adcitra-hooks-lib.js?v=1780568589";var n={...e,useConfirm:t},r=`@adcitra_panel/hooks/feedback/confirm`,i=n;export{r as name,i as provider};

@@ -1,0 +1,274 @@
+{
+  "protocol": "adcitra_panel-waf-esm-v1",
+  "name": "waf",
+  "version": "1.0.0",
+  "entry": "assets/waf-entry.js?v=2026-06-04T10%3A27%3A19.389Z",
+  "styles": [
+    "assets/waf.css?v=2026-06-04T10%3A27%3A19.389Z"
+  ],
+  "minPanelVersion": "10.0.0",
+  "platformApiVersion": "1",
+  "sharedContractVersion": "1",
+  "requiredCapabilities": [
+    "core",
+    "runtime",
+    "theme",
+    "storage",
+    "request",
+    "feedback.message",
+    "feedback.dialog",
+    "charts.basic",
+    "charts.map",
+    "vue.directives",
+    "panel-business.runtime",
+    "panel-business.router",
+    "panel-business.store",
+    "panel-business.hooks-tools",
+    "panel-business.hooks-form-item",
+    "panel-business.hooks-router-tabs",
+    "panel-business.api-global",
+    "panel-business.services-popup",
+    "ui.base",
+    "ui.data",
+    "ui.form",
+    "ui.feedback",
+    "ui.navigation",
+    "ui.other",
+    "panel-extension-runtime"
+  ],
+  "requiredSharedPackages": [
+    "@adcitra_panel/core",
+    "@adcitra_panel/core/date",
+    "@adcitra_panel/core/format",
+    "@adcitra_panel/core/type",
+    "@adcitra_panel/hooks",
+    "@adcitra_panel/hooks/charts",
+    "@adcitra_panel/hooks/charts/data/world",
+    "@adcitra_panel/hooks/tabs",
+    "@adcitra_panel/panel-business/api/global",
+    "@adcitra_panel/panel-business/components/extension/bt-editor",
+    "@adcitra_panel/panel-business/components/extension/bt-log/index.vue",
+    "@adcitra_panel/panel-business/components/other/bt-ai-tips/index.vue",
+    "@adcitra_panel/panel-business/hooks/form/form-item",
+    "@adcitra_panel/panel-business/hooks/router-tabs",
+    "@adcitra_panel/panel-business/hooks/tools",
+    "@adcitra_panel/panel-business/hooks/tools/table/column",
+    "@adcitra_panel/panel-business/runtime",
+    "@adcitra_panel/panel-business/services/popup",
+    "@adcitra_panel/panel-business/store/global",
+    "@adcitra_panel/panel-extension-runtime",
+    "@adcitra_panel/runtime/storage",
+    "@adcitra_panel/runtime/theme",
+    "@adcitra_panel/ui/base",
+    "@adcitra_panel/ui/data",
+    "@adcitra_panel/ui/data/bt-echart/runtime",
+    "@adcitra_panel/ui/form",
+    "@adcitra_panel/ui/other",
+    "@vueuse/core",
+    "element-plus",
+    "element-plus/es",
+    "pinia",
+    "vue"
+  ],
+  "requiredSharedExports": {
+    "@adcitra_panel/core": [
+      "getPageTotal"
+    ],
+    "@adcitra_panel/core/date": [
+      "formatTime"
+    ],
+    "@adcitra_panel/core/format": [
+      "getByteUnit"
+    ],
+    "@adcitra_panel/core/type": [
+      "isObject"
+    ],
+    "@adcitra_panel/hooks": [
+      "useConfirm",
+      "useDataHandle",
+      "useDialog",
+      "useLoop",
+      "useMessage"
+    ],
+    "@adcitra_panel/hooks/charts": [
+      "useChinaMapData",
+      "useECharts",
+      "useMapData"
+    ],
+    "@adcitra_panel/hooks/tabs": [
+      "useTabs"
+    ],
+    "@adcitra_panel/panel-business/api/global": [
+      "getFileContent",
+      "getPluginFindInfo",
+      "saveFileBody"
+    ],
+    "@adcitra_panel/panel-business/hooks/form/form-item": [
+      "FormButton",
+      "FormCheckbox",
+      "FormCustom",
+      "FormGroup",
+      "FormHelp",
+      "FormInput",
+      "FormItemCustom",
+      "FormRadio",
+      "FormRadioButton",
+      "FormSelect",
+      "FormSwitch",
+      "FormTextarea"
+    ],
+    "@adcitra_panel/panel-business/hooks/router-tabs": [
+      "useRouterTabs"
+    ],
+    "@adcitra_panel/panel-business/hooks/tools": [
+      "useAllTable",
+      "useAxios",
+      "useBatch",
+      "useDynamicTable",
+      "useForm",
+      "usePage",
+      "useRefresh",
+      "useSearch",
+      "useTable"
+    ],
+    "@adcitra_panel/panel-business/hooks/tools/table/column": [
+      "useBatchStatus",
+      "useCheckbox",
+      "useOperate",
+      "useSwitch"
+    ],
+    "@adcitra_panel/panel-business/runtime": [
+      "panelBusinessRouter"
+    ],
+    "@adcitra_panel/panel-business/services/popup": [
+      "productPaymentDialog"
+    ],
+    "@adcitra_panel/panel-business/store/global": [
+      "useGlobalStore"
+    ],
+    "@adcitra_panel/runtime/storage": [
+      "getCookie",
+      "setCookie"
+    ],
+    "@adcitra_panel/runtime/theme": [
+      "hexToRgb"
+    ],
+    "@adcitra_panel/ui/data/bt-echart/runtime": [
+      "loadEchartsRuntime"
+    ],
+    "@adcitra_panel/ui/form": [
+      "BtCheckbox",
+      "BtFormItem",
+      "BtInput",
+      "BtRadio",
+      "BtSelect",
+      "BtSwitch"
+    ],
+    "@adcitra_panel/ui/other": [
+      "BtDivider"
+    ],
+    "@vueuse/core": [
+      "useDark",
+      "useDebounceFn",
+      "useElementSize"
+    ],
+    "element-plus": [
+      "ElButton",
+      "ElCheckbox",
+      "ElFormItem",
+      "ElInput",
+      "ElOption",
+      "ElPopover",
+      "ElRadio",
+      "ElRadioGroup",
+      "ElScrollbar",
+      "ElSelect",
+      "ElSwitch",
+      "ElTag",
+      "ElTooltip"
+    ],
+    "vue": [
+      "Fragment",
+      "computed",
+      "createBlock",
+      "createCommentVNode",
+      "createElementBlock",
+      "createElementVNode",
+      "createSlots",
+      "createStaticVNode",
+      "createTextVNode",
+      "createVNode",
+      "defineAsyncComponent",
+      "defineComponent",
+      "getCurrentInstance",
+      "h",
+      "isRef",
+      "mergeModels",
+      "mergeProps",
+      "normalizeClass",
+      "normalizeStyle",
+      "onMounted",
+      "onUnmounted",
+      "openBlock",
+      "reactive",
+      "ref",
+      "renderList",
+      "renderSlot",
+      "resolveComponent",
+      "resolveDirective",
+      "resolveDynamicComponent",
+      "toDisplayString",
+      "toRef",
+      "toRefs",
+      "unref",
+      "useModel",
+      "vShow",
+      "watch",
+      "withCtx",
+      "withDirectives",
+      "withKeys"
+    ]
+  },
+  "requiredSharedDefaults": [
+    "@adcitra_panel/hooks/charts/data/world",
+    "@adcitra_panel/panel-business/components/extension/bt-editor",
+    "@adcitra_panel/panel-business/components/extension/bt-log/index.vue",
+    "@adcitra_panel/panel-business/components/other/bt-ai-tips/index.vue",
+    "@adcitra_panel/panel-extension-runtime"
+  ],
+  "requiredSharedVersions": {
+    "@adcitra_panel/core": "workspace:*",
+    "@adcitra_panel/core/date": "workspace:*",
+    "@adcitra_panel/core/format": "workspace:*",
+    "@adcitra_panel/core/type": "workspace:*",
+    "@adcitra_panel/hooks": "workspace:*",
+    "@adcitra_panel/hooks/charts": "workspace:*",
+    "@adcitra_panel/hooks/charts/data/world": "workspace:*",
+    "@adcitra_panel/hooks/tabs": "workspace:*",
+    "@adcitra_panel/panel-business/api/global": "workspace:*",
+    "@adcitra_panel/panel-business/components/extension/bt-editor": "workspace:*",
+    "@adcitra_panel/panel-business/components/extension/bt-log/index.vue": "workspace:*",
+    "@adcitra_panel/panel-business/components/other/bt-ai-tips/index.vue": "workspace:*",
+    "@adcitra_panel/panel-business/hooks/form/form-item": "workspace:*",
+    "@adcitra_panel/panel-business/hooks/router-tabs": "workspace:*",
+    "@adcitra_panel/panel-business/hooks/tools": "workspace:*",
+    "@adcitra_panel/panel-business/hooks/tools/table/column": "workspace:*",
+    "@adcitra_panel/panel-business/runtime": "workspace:*",
+    "@adcitra_panel/panel-business/services/popup": "workspace:*",
+    "@adcitra_panel/panel-business/store/global": "workspace:*",
+    "@adcitra_panel/panel-extension-runtime": "workspace:*",
+    "@adcitra_panel/runtime/storage": "workspace:*",
+    "@adcitra_panel/runtime/theme": "workspace:*",
+    "@adcitra_panel/ui/base": "workspace:*",
+    "@adcitra_panel/ui/data": "workspace:*",
+    "@adcitra_panel/ui/data/bt-echart/runtime": "workspace:*",
+    "@adcitra_panel/ui/form": "workspace:*",
+    "@adcitra_panel/ui/other": "workspace:*",
+    "@vueuse/core": "^14.3.0",
+    "element-plus": "^2.14.0",
+    "element-plus/es": "^2.14.0",
+    "pinia": "^3.0.0",
+    "vue": "^3.5.0"
+  },
+  "builtAt": "2026-06-04T10:27:19.389Z"
+}

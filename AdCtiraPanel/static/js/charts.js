@@ -1,0 +1,1 @@
+import{i as e,n as t,r as n,t as r}from"./adcitra-hooks-lib.js?v=1780568589";var i={...r,useECharts:n,useMapData:e,useChinaMapData:t},a=`@adcitra_panel/hooks/charts`,o=i;export{a as name,o as provider};

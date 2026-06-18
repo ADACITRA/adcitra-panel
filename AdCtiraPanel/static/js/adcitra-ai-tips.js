@@ -1,0 +1,1 @@
+import{nt as e,tt as t}from"./adcitra-panel-business-hooks-lib.js?v=1780568589";var n={...e,default:t},r=`@adcitra_panel/panel-business/components/other/bt-ai-tips/index.vue`,i=n;export{r as name,i as provider};

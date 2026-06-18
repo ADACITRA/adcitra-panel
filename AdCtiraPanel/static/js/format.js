@@ -1,0 +1,1 @@
+import{c as e,l as t}from"./adcitra-core-lib.js?v=1780568589";var n={...e,getByteUnit:t},r=`@adcitra_panel/core/format`,i=n;export{r as name,i as provider};

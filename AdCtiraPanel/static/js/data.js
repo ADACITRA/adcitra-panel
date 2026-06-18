@@ -1,0 +1,1 @@
+import{St as e,bt as t,xt as n,yt as r}from"./adcitra-hooks-lib.js?v=1780568589";var i={...t,DataHandle:r,useDataHandle:n,useDataPage:e},a=`@adcitra_panel/hooks/data`,o=i;export{a as name,o as provider};

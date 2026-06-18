@@ -1,0 +1,1 @@
+import{h as e,m as t}from"./adcitra-panel-business-hooks-lib.js?v=1780568589";var n={...t,useRouterTabs:e},r=`@adcitra_panel/panel-business/hooks/router-tabs`,i=n;export{r as name,i as provider};

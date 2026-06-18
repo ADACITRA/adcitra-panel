@@ -1,0 +1,1 @@
+import{G as e,J as t,a as n,t as r}from"./adcitra-request-lib.js?v=1780568589";var i={...r,useAxios:t,createAxios:e,useSocket:n},a=`@adcitra_panel/request`,o=i;export{a as name,o as provider};

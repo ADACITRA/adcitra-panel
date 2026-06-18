@@ -1,0 +1,1 @@
+import{Z as e,q as t}from"./adcitra-core-lib.js?v=1780568589";var n={...e,isObject:t},r=`@adcitra_panel/core/type`,i=n;export{r as name,i as provider};

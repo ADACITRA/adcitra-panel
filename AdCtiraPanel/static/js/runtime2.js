@@ -1,0 +1,1 @@
+import{t as e}from"./adcitra-runtime-lib.js?v=1780568589";var t=e,n=`@adcitra_panel/runtime`,r=t;export{n as name,r as provider};

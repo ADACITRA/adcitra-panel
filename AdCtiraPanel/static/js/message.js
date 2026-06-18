@@ -1,0 +1,1 @@
+import{At as e,Dt as t,Ot as n,kt as r}from"./adcitra-hooks-lib.js?v=1780568589";var i={...n,Message:t,useLoading:r,useMessage:e},a=`@adcitra_panel/hooks/feedback/message`,o=i;export{a as name,o as provider};

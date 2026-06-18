@@ -1,0 +1,1 @@
+import{K as e,q as t}from"./adcitra-hooks-lib.js?v=1780568589";var n={...e,useTabs:t},r=`@adcitra_panel/hooks/tabs`,i=n;export{r as name,i as provider};

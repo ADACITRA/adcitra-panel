@@ -1,0 +1,1 @@
+import{_ as e,p as t}from"./adcitra-runtime-lib.js?v=1780568589";var n={...t,hexToRgb:e},r=`@adcitra_panel/runtime/theme`,i=n;export{r as name,i as provider};

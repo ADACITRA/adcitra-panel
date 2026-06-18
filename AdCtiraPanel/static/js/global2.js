@@ -1,0 +1,1 @@
+import{Dt as e,Ot as t,kt as n}from"./adcitra-panel-business-store-lib.js?v=1780568589";var r={...t,useGlobalStore:n,GLOBAL_STORE:e},i=`@adcitra_panel/panel-business/store/global`,a=r;export{i as name,a as provider};

@@ -1,0 +1,1 @@
+import{It as e,Pt as t}from"./adcitra-hooks-lib.js?v=1780568589";var n={...e,DialogHost:t},r=`@adcitra_panel/hooks/feedback/dialog`,i=n;export{r as name,i as provider};
