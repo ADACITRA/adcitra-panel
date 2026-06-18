@@ -1,5 +1,39 @@
 #!/bin/bash
 # adcitra ? ????????? CLI
-# Usage: adcitra <command> [options]
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-exec python3 "$SCRIPT_DIR/adcitra.py" "$@"
+
+case "${1:-}" in
+    webhook)
+        shift
+        exec python3 "$SCRIPT_DIR/webhook.py" "$@"
+        ;;
+    dashboard)
+        echo "Opening dashboard..."
+        python3 -c "import webbrowser; webbrowser.open('http://localhost:9999')" 2>/dev/null
+        echo "Dashboard: http://localhost:9999"
+        echo "Run 'adcitra webhook' first if not running"
+        ;;
+    create)
+        shift
+        FRAMEWORK="${1:-}"
+        APP_NAME="${2:-}"
+        if [ -z "$FRAMEWORK" ] || [ -z "$APP_NAME" ]; then
+            echo "Usage: adcitra create <framework> <app-name>"
+            echo "Frameworks: laravel, django, nextjs, express, flask"
+            exit 1
+        fi
+        TARGET="./$APP_NAME"
+        echo "Creating $FRAMEWORK project: $APP_NAME"
+        case "$FRAMEWORK" in
+            laravel)  exec composer create-project laravel/laravel "$TARGET" ;;
+            django)   exec python3 -m django startproject "$APP_NAME" "$TARGET" ;;
+            nextjs)   exec npx create-next-app "$TARGET" ;;
+            express)  mkdir -p "$TARGET" && cd "$TARGET" && npm init -y && npm install express ;;
+            flask)    mkdir -p "$TARGET" && cd "$TARGET" && echo -e "from flask import Flask\napp=Flask(__name__)\n@app.route('/')\ndef hello():return 'Hello'\nif __name__=='__main__':app.run()" > app.py && echo "flask" > requirements.txt ;;
+            *)        echo "Unknown framework: $FRAMEWORK"; exit 1 ;;
+        esac
+        ;;
+    *)
+        exec python3 "$SCRIPT_DIR/adcitra.py" "$@"
+        ;;
+esac

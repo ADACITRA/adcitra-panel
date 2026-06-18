@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """
 adcitra — 自托管应用部署平台 CLI
 让任何服务器拥有 Vercel/Heroku 一样的一键部署体验
