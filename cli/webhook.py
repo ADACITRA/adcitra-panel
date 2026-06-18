@@ -2,6 +2,7 @@
 """AdCtira Webhook — Git 自动部署接收器 + 部署仪表盘"""
 import os, sys, json, hmac, hashlib, subprocess, threading
 from pathlib import Path
+import shlex
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from datetime import datetime
 
@@ -18,7 +19,7 @@ def save_deploys(d):
     DEPLOYS_FILE.write_text(json.dumps(d, indent=2, ensure_ascii=False))
 
 def deploy_git(repo_url, branch="main", name=""):
-    name = name or repo_url.rstrip("/").split("/")[-1].replace(".git","")
+    import re; name = re.sub(r'[^a-zA-Z0-9_\-]', '', name or repo_url.rstrip("/").split("/")[-1].replace(".git",""))
     preview = branch not in ("main","master")
     dn = f"{name}-{branch}" if preview else name
     dd = f"/www/wwwroot/{dn}"

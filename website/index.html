@@ -1,691 +1,196 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AdCtira灯塔 v12.0 - 下一代开源服务器运维面板</title>
-<meta name="description" content="AdCtira灯塔 - 比宝塔更开放，比1Panel更强大。Docker原生部署、AI智能运维、企业级安全、插件生态兼容。">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AdCtira灯塔 v12 — 自托管部署平台</title>
 <style>
-/* ===== CSS Variables ===== */
-:root {
-  --amber: #f59e0b;
-  --amber-light: #fbbf24;
-  --amber-dark: #d97706;
-  --navy: #0f172a;
-  --navy-light: #1e293b;
-  --slate: #334155;
-  --slate-light: #64748b;
-  --white: #f8fafc;
-  --glass: rgba(255,255,255,0.05);
-  --glass-border: rgba(255,255,255,0.1);
-  --gradient-main: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-  --gradient-glow: linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #f59e0b 100%);
-  --shadow-glow: 0 0 40px rgba(245,158,11,0.3);
-}
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--amber:#f59e0b;--amber-l:#fbbf24;--navy:#020617;--slate:#334155;--slate-l:#64748b}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif;background:var(--navy);color:#e2e8f0;overflow-x:hidden}
+#starfield{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;pointer-events:none}
+.grid-bg{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;background-image:linear-gradient(rgba(245,158,11,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(245,158,11,.03) 1px,transparent 1px);background-size:60px 60px;pointer-events:none}
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
-  background: var(--gradient-main);
-  color: var(--white);
-  line-height: 1.6;
-  overflow-x: hidden;
-}
+/* Lighthouse */
+.lighthouse-wrap{position:absolute;bottom:0;left:50%;transform:translateX(-50%);z-index:2;height:100vh;width:600px;pointer-events:none}
+.tower{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:40px;height:180px;background:repeating-linear-gradient(90deg,#e2e8f0 0,#e2e8f0 12px,#0f172a 12px,#0f172a 24px);clip-path:polygon(5% 0,95% 0,100% 100%,0% 100%)}
+.tower::after{content:"";position:absolute;top:-20px;left:-12px;width:64px;height:24px;background:repeating-linear-gradient(90deg,transparent 0,transparent 8px,rgba(245,158,11,.3) 8px,rgba(245,158,11,.3) 10px);border-radius:4px 4px 0 0;box-shadow:0 0 40px rgba(245,158,11,.6),0 0 80px rgba(245,158,11,.3)}
+.tower::before{content:"";position:absolute;top:-28px;left:-6px;width:52px;height:10px;background:#1e293b;clip-path:polygon(10% 100%,90% 100%,100% 0,0% 0)}
+.beam{position:absolute;top:-60px;left:50%;margin-left:-200px;width:400px;height:900px;z-index:1;background:conic-gradient(from 0deg at 50% 100%,transparent 0deg,rgba(245,158,11,.35) 8deg,rgba(255,255,255,.5) 12deg,rgba(245,158,11,.35) 16deg,transparent 24deg);transform-origin:50% 100%;animation:sweep 7s cubic-bezier(.4,0,.2,1) infinite alternate;filter:blur(6px) brightness(1.3)}
+.beam-glow{position:absolute;top:-60px;left:50%;margin-left:-50px;width:100px;height:200px;z-index:1;background:radial-gradient(ellipse at 50% 0%,rgba(245,158,11,.5) 0%,rgba(245,158,11,.15) 40%,transparent 70%);animation:pulse 3s ease-in-out infinite alternate}
+@keyframes sweep{0%{transform:rotate(-35deg);opacity:.4}50%{opacity:1}100%{transform:rotate(35deg);opacity:.4}}
+@keyframes pulse{0%{opacity:.5;transform:scaleY(.8)}100%{opacity:1;transform:scaleY(1.2)}}
+.ocean{position:absolute;bottom:0;left:0;width:100%;height:120px;z-index:2;background:linear-gradient(to top,#020617 0%,transparent 100%)}
+.ocean::before{content:"";position:absolute;bottom:0;left:-50%;width:200%;height:100%;background:repeating-linear-gradient(90deg,transparent 0,transparent 40px,rgba(245,158,11,.05) 40px,rgba(245,158,11,.05) 42px);animation:wave 8s linear infinite}
+@keyframes wave{0%{transform:translateX(0)}100%{transform:translateX(40px)}}
 
-/* ===== Navigation ===== */
-nav {
-  position: fixed; top: 0; width: 100%; z-index: 100;
-  padding: 1rem 2rem;
-  background: rgba(15,23,42,0.8);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--glass-border);
-  display: flex; align-items: center; justify-content: space-between;
-}
-.nav-logo { display: flex; align-items: center; gap: 0.5rem; font-size: 1.25rem; font-weight: 700; }
-.nav-logo .beacon { width: 12px; height: 12px; background: var(--amber); border-radius: 50%; box-shadow: 0 0 20px var(--amber); animation: pulse 2s infinite; }
-@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
-.nav-links { display: flex; gap: 2rem; list-style: none; }
-.nav-links a { color: var(--slate-light); text-decoration: none; font-size: 0.9rem; transition: color 0.3s; }
-.nav-links a:hover { color: var(--amber); }
-.nav-cta {
-  padding: 0.5rem 1.25rem;
-  background: var(--gradient-glow);
-  color: var(--navy) !important;
-  border-radius: 999px;
-  font-weight: 600;
-  font-size: 0.85rem;
-}
+/* Hero */
+.hero{position:relative;z-index:3;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 20px 180px}
+.hero h1{font-size:clamp(2.5rem,6vw,4.5rem);font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:16px}
+.hero h1 span{background:linear-gradient(135deg,#fbbf24,#f59e0b,#d97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:clamp(1rem,2vw,1.2rem);color:var(--slate-l);max-width:580px;margin:0 auto 32px;line-height:1.8}
+.badge{display:inline-block;padding:6px 16px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);border-radius:999px;font-size:13px;color:var(--amber-l);margin-bottom:20px}
+.btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-p{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#0f172a;border-radius:999px;font-weight:700;font-size:15px;text-decoration:none;transition:all .3s}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(245,158,11,.35)}
+.btn-s{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:transparent;color:#e2e8f0;border:1px solid #334155;border-radius:999px;font-weight:600;font-size:15px;text-decoration:none;transition:all .3s}
+.btn-s:hover{border-color:var(--amber);color:var(--amber-l)}
 
-/* ===== Hero ===== */
-.hero {
-  min-height: 100vh;
-  display: flex; align-items: center; justify-content: center;
-  text-align: center;
-  padding: 6rem 2rem 4rem;
-  position: relative;
-  overflow: hidden;
-}
-.hero::before {
-  content: "";
-  position: absolute; top: 50%; left: 50%;
-  width: 800px; height: 800px;
-  background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%);
-  transform: translate(-50%, -50%);
-  animation: glow-pulse 4s ease-in-out infinite;
-}
-@keyframes glow-pulse { 0%,100% { transform: translate(-50%,-50%) scale(1); opacity: 0.5; } 50% { transform: translate(-50%,-50%) scale(1.2); opacity: 1; } }
-.hero-content { position: relative; z-index: 1; max-width: 800px; }
-.hero-badge {
-  display: inline-block;
-  padding: 0.4rem 1rem;
-  background: rgba(245,158,11,0.15);
-  border: 1px solid rgba(245,158,11,0.3);
-  border-radius: 999px;
-  font-size: 0.8rem;
-  color: var(--amber-light);
-  margin-bottom: 1.5rem;
-}
-.hero h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem; }
-.hero h1 span { background: var(--gradient-glow); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.hero p { font-size: clamp(1rem, 2vw, 1.25rem); color: var(--slate-light); max-width: 600px; margin: 0 auto 2.5rem; }
-.hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-.btn-primary {
-  padding: 0.9rem 2rem;
-  background: var(--gradient-glow);
-  color: var(--navy);
-  border: none; border-radius: 999px;
-  font-size: 1rem; font-weight: 700;
-  cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-.btn-primary:hover { transform: translateY(-2px); box-shadow: var(--shadow-glow); }
-.btn-secondary {
-  padding: 0.9rem 2rem;
-  background: transparent;
-  color: var(--white);
-  border: 1px solid var(--glass-border);
-  border-radius: 999px;
-  font-size: 1rem; font-weight: 600;
-  text-decoration: none;
-  transition: all 0.3s;
-}
-.btn-secondary:hover { border-color: var(--amber); color: var(--amber); }
+/* Sections */
+section{position:relative;z-index:3;padding:80px 20px}
+.section-title{text-align:center;margin-bottom:60px}
+.section-title h2{font-size:clamp(1.8rem,3vw,2.8rem);font-weight:700;margin-bottom:12px}
+.section-title p{color:var(--slate-l);max-width:560px;margin:0 auto;font-size:15px;line-height:1.7}
 
-/* ===== Section Common ===== */
-section { padding: 6rem 2rem; }
-.section-title { text-align: center; margin-bottom: 4rem; }
-.section-title h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; margin-bottom: 1rem; }
-.section-title p { color: var(--slate-light); max-width: 600px; margin: 0 auto; font-size: 1.1rem; }
+/* Glass Cards */
+.glass-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;max-width:1100px;margin:0 auto}
+.glass{padding:28px 24px;background:rgba(30,41,59,.4);border:1px solid rgba(255,255,255,.06);border-radius:16px;backdrop-filter:blur(12px);transition:all .4s}
+.glass:hover{transform:translateY(-4px);border-color:rgba(245,158,11,.2);box-shadow:0 20px 40px rgba(0,0,0,.4)}
+.glass .icon{font-size:2rem;margin-bottom:12px}.glass h3{font-size:1.1rem;font-weight:600;margin-bottom:8px}.glass p{color:var(--slate-l);font-size:14px;line-height:1.7}
 
-/* ===== Features ===== */
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-.feature-card {
-  padding: 2rem;
-  background: var(--glass);
-  border: 1px solid var(--glass-border);
-  border-radius: 16px;
-  backdrop-filter: blur(10px);
-  transition: all 0.3s;
-}
-.feature-card:hover { transform: translateY(-4px); border-color: rgba(245,158,11,0.3); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
-.feature-icon { font-size: 2rem; margin-bottom: 1rem; }
-.feature-card h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
-.feature-card p { color: var(--slate-light); font-size: 0.9rem; line-height: 1.7; }
-.feature-tag {
-  display: inline-block;
-  padding: 0.15rem 0.5rem;
-  background: rgba(245,158,11,0.15);
-  border-radius: 4px;
-  font-size: 0.7rem;
-  color: var(--amber-light);
-  margin-top: 0.75rem;
-}
+/* Terminal */
+.terminal{background:#0c0c1a;border:1px solid #2a2a4a;border-radius:12px;padding:20px;font-family:"SF Mono","Fira Code",monospace;font-size:13px;overflow-x:auto;max-width:700px;margin:24px auto;line-height:1.8}
+.terminal .prompt{color:var(--amber-l)}.terminal .comment{color:#475569;font-style:italic}.terminal .cmd{color:#e2e8f0}.terminal .out{color:#4ade80}
 
-/* ===== Innovation ===== */
-.innovation { background: rgba(255,255,255,0.02); }
-.innovation-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-.innovation-card {
-  padding: 2.5rem;
-  background: var(--glass);
-  border: 1px solid var(--glass-border);
-  border-radius: 16px;
-  text-align: center;
-  transition: all 0.3s;
-  position: relative;
-  overflow: hidden;
-}
-.innovation-card::before {
-  content: "";
-  position: absolute; top: 0; left: 0; right: 0;
-  height: 3px;
-  background: var(--gradient-glow);
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-.innovation-card:hover::before { opacity: 1; }
-.innovation-card:hover { transform: translateY(-4px); }
-.innovation-card .big-icon { font-size: 3rem; margin-bottom: 1rem; }
-.innovation-card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.75rem; }
-.innovation-card p { color: var(--slate-light); font-size: 0.9rem; line-height: 1.7; }
-.innovation-card .status {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  margin-top: 1rem;
-  padding: 0.3rem 0.75rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-.status-now { background: rgba(34,197,94,0.15); color: #22c55e; }
-.status-next { background: rgba(59,130,246,0.15); color: #3b82f6; }
-.status-future { background: rgba(168,85,247,0.15); color: #a855f7; }
+/* Compare */
+.compare-wrap{max-width:1000px;margin:0 auto;overflow-x:auto}
+.compare{width:100%;border-collapse:collapse;font-size:14px}
+.compare th,.compare td{padding:14px 18px;text-align:center;border-bottom:1px solid rgba(255,255,255,.06)}
+.compare th:first-child,.compare td:first-child{text-align:left;color:var(--slate-l)}
+.compare th{font-weight:700;font-size:15px;padding-bottom:20px}.compare .us{color:var(--amber-l);font-weight:600}.compare .check{color:#22c55e}
 
-/* ===== Comparison ===== */
-.compare-table-wrap {
-  max-width: 1000px;
-  margin: 0 auto;
-  overflow-x: auto;
-}
-.compare-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
-}
-.compare-table th, .compare-table td {
-  padding: 1rem 1.25rem;
-  text-align: center;
-  border-bottom: 1px solid var(--glass-border);
-}
-.compare-table th:first-child, .compare-table td:first-child {
-  text-align: left;
-  color: var(--slate-light);
-}
-.compare-table th {
-  font-weight: 700;
-  font-size: 1rem;
-  padding-bottom: 1.5rem;
-}
-.compare-table .highlight { color: var(--amber-light); font-weight: 600; }
-.compare-table .check { color: #22c55e; }
-.compare-table .cross { color: #ef4444; opacity: 0.5; }
+/* Pricing */
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;max-width:950px;margin:0 auto}
+.price-card{padding:32px 24px;background:rgba(30,41,59,.4);border:1px solid rgba(255,255,255,.06);border-radius:16px;text-align:center;transition:all .4s;position:relative}
+.price-card.featured{border-color:rgba(245,158,11,.4);box-shadow:0 0 40px rgba(245,158,11,.15);transform:scale(1.04)}
+.price-card.featured .pop{position:absolute;top:-12px;left:50%;transform:translateX(-50%);padding:4px 20px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#0f172a;border-radius:999px;font-size:12px;font-weight:700}
+.price-card h3{font-size:1.2rem;font-weight:700;margin-bottom:4px}
+.price-card .pr{font-size:2.8rem;font-weight:800;margin:12px 0;color:var(--amber-l)}
+.price-card .pr span{font-size:1rem;font-weight:400;color:var(--slate-l)}
+.price-card .desc{color:var(--slate-l);font-size:13px;margin-bottom:20px}
+.price-card ul{list-style:none;text-align:left;margin-bottom:24px}
+.price-card ul li{padding:6px 0;font-size:14px;color:var(--slate-l)}
+.price-card ul li::before{content:"\2713 ";color:#22c55e;font-weight:700}
+.price-card .btn-p{width:100%;justify-content:center}
 
-/* ===== Pricing ===== */
-.pricing-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  max-width: 1000px;
-  margin: 0 auto;
-}
-.pricing-card {
-  padding: 2.5rem 2rem;
-  background: var(--glass);
-  border: 1px solid var(--glass-border);
-  border-radius: 16px;
-  text-align: center;
-  transition: all 0.3s;
-  position: relative;
-}
-.pricing-card.featured {
-  border-color: var(--amber);
-  box-shadow: 0 0 30px rgba(245,158,11,0.15);
-  transform: scale(1.05);
-}
-.pricing-card.featured .badge {
-  position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-  padding: 0.3rem 1.5rem;
-  background: var(--gradient-glow);
-  color: var(--navy);
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-.pricing-card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem; }
-.pricing-card .price { font-size: 3rem; font-weight: 800; margin: 1rem 0; }
-.pricing-card .price span { font-size: 1rem; font-weight: 400; color: var(--slate-light); }
-.pricing-card .desc { color: var(--slate-light); font-size: 0.85rem; margin-bottom: 1.5rem; }
-.pricing-card ul { list-style: none; text-align: left; margin-bottom: 2rem; }
-.pricing-card ul li { padding: 0.5rem 0; font-size: 0.9rem; color: var(--slate-light); }
-.pricing-card ul li::before { content: "✓ "; color: #22c55e; font-weight: 700; }
-.pricing-card .btn-primary { width: 100%; }
+/* Install */
+.install-tabs{display:flex;gap:8px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+.install-tab{padding:8px 20px;background:rgba(30,41,59,.5);border:1px solid #334155;border-radius:8px;color:var(--slate-l);cursor:pointer;font-size:14px;transition:all .3s}
+.install-tab.active{border-color:var(--amber);color:var(--amber-l);background:rgba(245,158,11,.1)}
 
-/* ===== Install ===== */
-.install-wrap {
-  max-width: 800px;
-  margin: 0 auto;
-}
-.install-code {
-  background: rgba(0,0,0,0.3);
-  border: 1px solid var(--glass-border);
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 1rem;
-  font-family: "Fira Code", "Consolas", monospace;
-  font-size: 0.85rem;
-  color: var(--amber-light);
-  overflow-x: auto;
-  position: relative;
-}
-.install-code .comment { color: var(--slate-light); }
-.install-tabs {
-  display: flex; gap: 0.5rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-}
-.install-tab {
-  padding: 0.5rem 1rem;
-  background: transparent;
-  border: 1px solid var(--glass-border);
-  border-radius: 8px;
-  color: var(--slate-light);
-  cursor: pointer;
-  font-size: 0.85rem;
-  transition: all 0.3s;
-}
-.install-tab.active { border-color: var(--amber); color: var(--amber); background: rgba(245,158,11,0.1); }
-.install-tab:hover { border-color: var(--amber); }
+/* Footer */
+footer{position:relative;z-index:3;border-top:1px solid rgba(255,255,255,.06);padding:48px 20px 24px;text-align:center}
+footer p{color:var(--slate-l);font-size:13px;margin:4px 0}
 
-/* ===== FAQ ===== */
-.faq-grid {
-  max-width: 700px;
-  margin: 0 auto;
-}
-.faq-item {
-  padding: 1.5rem;
-  border-bottom: 1px solid var(--glass-border);
-  cursor: pointer;
-}
-.faq-question {
-  display: flex; justify-content: space-between; align-items: center;
-  font-weight: 600;
-  font-size: 1rem;
-}
-.faq-answer {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s, padding 0.3s;
-  color: var(--slate-light);
-  font-size: 0.9rem;
-  line-height: 1.7;
-}
-.faq-item.open .faq-answer { max-height: 300px; padding-top: 1rem; }
-.faq-toggle { transition: transform 0.3s; }
-.faq-item.open .faq-toggle { transform: rotate(180deg); }
+/* Animations */
+.fade-in{opacity:0;transform:translateY(30px);transition:all .6s ease-out}
+.fade-in.show{opacity:1;transform:translateY(0)}
 
-/* ===== Footer ===== */
-footer {
-  border-top: 1px solid var(--glass-border);
-  padding: 4rem 2rem 2rem;
-}
-.footer-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2rem;
-  max-width: 1200px;
-  margin: 0 auto 3rem;
-}
-footer h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 1rem; color: var(--white); }
-footer a { display: block; color: var(--slate-light); text-decoration: none; font-size: 0.85rem; padding: 0.3rem 0; transition: color 0.3s; }
-footer a:hover { color: var(--amber); }
-.footer-bottom {
-  text-align: center;
-  padding-top: 2rem;
-  border-top: 1px solid var(--glass-border);
-  color: var(--slate-light);
-  font-size: 0.8rem;
-}
-
-/* ===== Animations ===== */
-.fade-in { opacity: 0; transform: translateY(30px); transition: all 0.6s ease-out; }
-.fade-in.visible { opacity: 1; transform: translateY(0); }
-
-/* ===== Responsive ===== */
-@media (max-width: 768px) {
-  .nav-links { display: none; }
-  .pricing-card.featured { transform: none; }
-  .hero h1 { font-size: 2rem; }
-  section { padding: 4rem 1.5rem; }
-}
-
-/* ===== Highlight box ===== */
-.highlight-box {
-  max-width: 800px;
-  margin: 2rem auto 0;
-  padding: 2rem;
-  background: rgba(245,158,11,0.05);
-  border: 1px solid rgba(245,158,11,0.2);
-  border-radius: 16px;
-  text-align: center;
-}
-.highlight-box h3 { color: var(--amber-light); margin-bottom: 0.75rem; }
-.highlight-box p { color: var(--slate-light); font-size: 0.9rem; }
+@media(max-width:768px){.lighthouse-wrap{display:none}.price-card.featured{transform:none}.hero{padding:100px 16px 160px}section{padding:60px 16px}}
 </style>
 </head>
 <body>
 
-<!-- Navigation -->
-<nav>
-  <div class="nav-logo">
-    <div class="beacon"></div>
-    <span>AdCtira灯塔</span>
-  </div>
-  <ul class="nav-links">
-    <li><a href="#features">功能</a></li>
-    <li><a href="#innovation">创新</a></li>
-    <li><a href="#compare">对比</a></li>
-    <li><a href="#pricing">价格</a></li>
-    <li><a href="#install">安装</a></li>
-    <li><a href="#install" class="nav-cta">立即开始</a></li>
-  </ul>
-</nav>
+<canvas id="starfield"></canvas>
+<div class="grid-bg"></div>
+
+<!-- Lighthouse -->
+<div class="lighthouse-wrap">
+  <div class="beam"></div>
+  <div class="beam-glow"></div>
+  <div class="tower"></div>
+  <div class="ocean"></div>
+</div>
 
 <!-- Hero -->
 <section class="hero">
-  <div class="hero-content">
-    <div class="hero-badge">✨ v12.0.0 正式发布</div>
-    <h1>让服务器管理<br>像 <span>灯塔</span> 一样明亮</h1>
-    <p>下一代开源服务器运维面板。Docker原生部署、AI智能运维、企业级安全策略、开放API平台。比宝塔更开放，比1Panel更强大。</p>
-    <div class="hero-buttons">
-      <a href="#install" class="btn-primary">免费开始使用</a>
-      <a href="#features" class="btn-secondary">了解功能</a>
-    </div>
-    <div style="margin-top:2rem;font-size:0.85rem;color:var(--slate-light);">
-      已处理 <strong style="color:var(--amber-light);">4480+</strong> 个文件 · <strong style="color:var(--amber-light);">120+</strong> 功能模块 · Docker 原生支持
-    </div>
+<div style="max-width:800px">
+  <div class="badge">AdCtira v12.0 - 自托管部署平台</div>
+  <h1>让服务器部署<br>像 <span>灯塔光束</span> 一样直达</h1>
+  <p>一行命令部署任何应用到自有服务器。<br>自托管 Vercel/Heroku + 宝塔级服务器管理。<br>全球首创 - 没有第二个产品做到。</p>
+  <div class="btns">
+    <a href="#install" class="btn-p">免费开始</a>
+    <a href="#features" class="btn-s">了解功能</a>
   </div>
+</div>
 </section>
 
 <!-- Features -->
 <section id="features">
-  <div class="section-title fade-in">
-    <h2>不止是面板，是完整的运维平台</h2>
-    <p>从网站管理到容器编排，从安全防护到AI运维，一站式解决服务器管理难题</p>
-  </div>
-  <div class="features-grid">
-    <div class="feature-card fade-in"><div class="feature-icon">🌐</div><h3>网站管理</h3><p>Nginx/Apache/OpenLiteSpeed 一键部署，支持 PHP/Java/Node.js/Python/.NET/Go</p><div class="feature-tag">基础版</div></div>
-    <div class="feature-card fade-in"><div class="feature-icon">🗄️</div><h3>数据库管理</h3><p>MySQL/MariaDB/PostgreSQL 在线管理、备份恢复、在线导入导出、慢查询分析</p><div class="feature-tag">基础版</div></div>
-    <div class="feature-card fade-in"><div class="feature-icon">🐳</div><h3>Docker 管理</h3><p>容器编排、镜像管理、Compose 可视化、应用商店一键部署</p><div class="feature-tag" style="background:rgba(34,197,94,0.15);color:#22c55e;">v12.0 增强</div></div>
-    <div class="feature-card fade-in"><div class="feature-icon">🔒</div><h3>SSL 证书</h3><p>Let's Encrypt 免费证书、DNS API 自动续签、SSL 部署监控、商业证书管理</p><div class="feature-tag">基础版</div></div>
-    <div class="feature-card fade-in"><div class="feature-icon">🛡️</div><h3>安全防护</h3><p>防火墙规则、WAF 防护、CC 攻击防护、木马查杀、SSH 安全、登录保护</p><div class="feature-tag">基础版</div></div>
-    <div class="feature-card fade-in"><div class="feature-icon">📁</div><h3>文件管理</h3><p>在线文件浏览器、拖拽上传/下载、代码编辑、解压压缩、权限管理、回收站</p><div class="feature-tag">基础版</div></div>
-    <div class="feature-card fade-in"><div class="feature-icon">📊</div><h3>性能监控</h3><p>CPU/内存/磁盘/网络 实时监控、进程管理、资源告警、历史趋势分析</p><div class="feature-tag">基础版</div></div>
-    <div class="feature-card fade-in"><div class="feature-icon">🔄</div><h3>计划任务</h3><p>定时备份、日志切割、Shell/Python 脚本、邮件通知、异常告警</p><div class="feature-tag">基础版</div></div>
-    <div class="feature-card fade-in"><div class="feature-icon">🧩</div><h3>插件系统</h3><p>300+ 免费应用一键部署。WordPress/Laravel/Discuz/Typecho 等主流程序</p><div class="feature-tag">基础版</div></div>
-  </div>
+<div class="section-title fade-in"><h2>一秒部署，一生拥有</h2><p>自托管意味着你永远拥有你的服务器和数据</p></div>
+<div class="glass-grid">
+  <div class="glass fade-in"><div class="icon">&#x1F680;</div><h3>adcitra deploy</h3><p>一行命令，从代码到上线。自动检测框架、生成nginx配置、创建数据库、配置SSL。支持 Laravel/Django/Next.js 等9种框架。</p></div>
+  <div class="glass fade-in"><div class="icon">&#x1F525;</div><h3>Git 自动部署</h3><p>连接 GitHub webhook，推送即部署。非 main 分支自动创建预览环境。Vercel 体验，你拥有服务器。</p></div>
+  <div class="glass fade-in"><div class="icon">&#x1F3D7;</div><h3>服务器管理</h3><p>网站/数据库/Docker/SSL/防火墙/文件 - 全套运维能力。300+ 应用一键安装，Nginx/MySQL/PHP 深度管理。</p></div>
+  <div class="glass fade-in"><div class="icon">&#x1F916;</div><h3>AI 自然语言运维</h3><p>"网站访问慢帮我看看" - AI 自动诊断 CPU/内存/磁盘/网络。不点按钮，说人话就行。</p></div>
+  <div class="glass fade-in"><div class="icon">&#x1F504;</div><h3>一键迁移</h3><p>从宝塔面板无缝迁移到灯塔。网站/数据库/FTP/SSL 全部自动转换路径。宝塔不敢做这个功能，我们做。</p></div>
+  <div class="glass fade-in"><div class="icon">&#x26A1;</div><h3>极简模式</h3><p>面板占用 < 50MB。适合 512MB 低配 VPS、树莓派。友商越做越臃肿，我们反着来。</p></div>
+</div>
 </section>
 
-<!-- Innovation -->
-<section id="innovation" class="innovation">
-  <div class="section-title fade-in">
-    <h2>三把火，照亮运维的未来</h2>
-    <p>我们不只是复刻，我们在三个方向上做了真正的创新</p>
-  </div>
-  <div class="innovation-grid">
-    <div class="innovation-card fade-in">
-      <div class="big-icon">🐳</div>
-      <h3>Docker 原生部署</h3>
-      <p>宝塔没有的，我们有。一键 Docker Compose 启动面板，告别繁琐的环境依赖。Python 3.11 + Nginx + Supervisor 深度集成。</p>
-      <div class="status status-now">✅ 已实现</div>
-    </div>
-    <div class="innovation-card fade-in">
-      <div class="big-icon">🤖</div>
-      <h3>AI 智能运维</h3>
-      <p>不只是聊天机器人。故障自动诊断、性能优化建议、安全事件智能分析、日志异常检测。真正的 AI Ops 体验。</p>
-      <div class="status status-now">✅ 已实现</div>
-    </div>
-    <div class="innovation-card fade-in">
-      <div class="big-icon">🔌</div>
-      <h3>开放 API 平台</h3>
-      <p>完整的 RESTful API 文档门户，开发者友好。基于 Flask 架构，插件开发门槛低，第三方扩展生态。</p>
-      <div class="status status-now">✅ 已实现</div>
-    </div>
-    <div class="innovation-card fade-in">
-      <div class="big-icon">☁️</div>
-      <h3>多云管理</h3>
-      <p>一个面板管理 AWS / GCP / Azure / 阿里云 等多云服务器。跨云迁移、成本分析、统一监控。</p>
-      <div class="status status-next">🔄 开发中</div>
-    </div>
-    <div class="innovation-card fade-in">
-      <div class="big-icon">🔐</div>
-      <h3>企业级安全</h3>
-      <p>JSON 策略配置、密码策略引擎、审计日志、2FA 双因素认证、IP 白名单、合规报告。</p>
-      <div class="status status-next">🔄 开发中</div>
-    </div>
-    <div class="innovation-card fade-in">
-      <div class="big-icon">🏪</div>
-      <h3>插件市场</h3>
-      <p>第三方开发者入驻，插件收入分成。从 WAF 到监控，从备份到 CI/CD，生态驱动增长。</p>
-      <div class="status status-future">🔮 规划中</div>
-    </div>
-  </div>
-
-  <div class="highlight-box fade-in">
-    <h3>💡 我们的理念</h3>
-    <p>不把用户当韭菜。基础版永久免费，专业版定价合理，企业版按需定制。每行代码都透明，每个功能都实用。</p>
-  </div>
-</section>
-
-<!-- Comparison -->
-<section id="compare">
-  <div class="section-title fade-in">
-    <h2>不做谁的替代品</h2>
-    <p>站在巨人的肩膀上，但我们有自己的路</p>
-  </div>
-  <div class="compare-table-wrap fade-in">
-    <table class="compare-table">
-      <thead>
-        <tr>
-          <th>功能对比</th>
-          <th style="color:var(--amber-light);font-weight:700;">AdCtira灯塔</th>
-          <th>宝塔面板</th>
-          <th>1Panel</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>开源协议</td><td class="highlight">专有许可（开放源码）</td><td>部分开源</td><td>GPL v3</td></tr>
-        <tr><td>开发语言</td><td class="highlight">Python + Flask</td><td>Python + Flask</td><td>Go</td></tr>
-        <tr><td>Docker 一键部署</td><td class="highlight check">✅ 原生支持</td><td class="cross">❌</td><td class="check">✅</td></tr>
-        <tr><td>AI 运维助手</td><td class="highlight check">✅ 内置 AI</td><td>AI建站</td><td class="check">✅ Ollama</td></tr>
-        <tr><td>企业安全策略</td><td class="highlight check">✅ JSON 配置</td><td>手动配置</td><td>基础配置</td></tr>
-        <tr><td>API 文档门户</td><td class="highlight check">✅ 完整文档</td><td>论坛零散</td><td>基础</td></tr>
-        <tr><td>多机管理</td><td class="highlight check">✅ 节点管理</td><td class="cross">❌ 付费</td><td class="check">✅ 集群</td></tr>
-        <tr><td>插件/应用数</td><td class="highlight">300+</td><td>300+</td><td>100+</td></tr>
-        <tr><td>云存储备份</td><td class="highlight check">✅ S3/OSS/COS</td><td class="cross">❌ 付费</td><td>基础支持</td></tr>
-        <tr><td>免费 SSL</td><td class="check">✅ Let's Encrypt</td><td class="check">✅</td><td class="check">✅</td></tr>
-        <tr><td>Docker Compose</td><td class="highlight check">✅ 面板自身+管理</td><td class="cross">❌</td><td class="check">✅</td></tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<!-- Pricing (Monetization) -->
-<section id="pricing" class="innovation">
-  <div class="section-title fade-in">
-    <h2>开放，但不是做慈善</h2>
-    <p>合理的定价让产品走得更远，让服务更有保障</p>
-  </div>
-  <div class="pricing-grid">
-    <div class="pricing-card fade-in">
-      <h3>基础版</h3>
-      <div class="price">¥0<span>/永久</span></div>
-      <p class="desc">个人开发者和小型项目首选</p>
-      <ul>
-        <li>完整面板核心功能</li>
-        <li>网站/数据库/FTP/SSL</li>
-        <li>Docker 管理</li>
-        <li>防火墙 + WAF</li>
-        <li>文件管理 + 计划任务</li>
-        <li>300+ 免费应用</li>
-        <li>社区支持</li>
-      </ul>
-      <a href="#install" class="btn-primary">免费使用</a>
-    </div>
-
-    <div class="pricing-card featured fade-in">
-      <div class="badge">热销</div>
-      <h3>专业版</h3>
-      <div class="price">¥19<span>/月</span></div>
-      <p class="desc">适合中小企业和专业开发者</p>
-      <ul>
-        <li>包含基础版全部功能</li>
-        <li>AI 智能运维助手</li>
-        <li>企业安全策略配置</li>
-        <li>云存储自动备份</li>
-        <li>高级 WAF 规则</li>
-        <li>优先技术支持</li>
-        <li>持续更新升级</li>
-      </ul>
-      <a href="#" class="btn-primary" onclick="alert('即将开放购买')">立即订阅</a>
-    </div>
-
-    <div class="pricing-card fade-in">
-      <h3>企业版</h3>
-      <div class="price">¥99<span>/月</span></div>
-      <p class="desc">大型企业和商业托管服务商</p>
-      <ul>
-        <li>包含专业版全部功能</li>
-        <li>白标品牌定制</li>
-        <li>多云统一管理</li>
-        <li>多用户权限管理</li>
-        <li>审计日志 + 合规报告</li>
-        <li>专属客户经理</li>
-        <li>SLA 保障</li>
-      </ul>
-      <a href="#" class="btn-primary" onclick="alert('请联系团队定制方案')">联系商务</a>
-    </div>
-  </div>
+<!-- Compare -->
+<section style="background:rgba(255,255,255,.02)">
+<div class="section-title fade-in"><h2>唯一覆盖全栈的产品</h2><p>从部署到运维，一个平台搞定</p></div>
+<div class="compare-wrap fade-in">
+<table class="compare">
+<thead><tr><th></th><th class="us">AdCtira</th><th>Vercel</th><th>宝塔</th><th>1Panel</th></tr></thead>
+<tbody>
+<tr><td>自托管</td><td class="us check">&#x2713;</td><td>&#x2716;</td><td class="check">&#x2713;</td><td class="check">&#x2713;</td></tr>
+<tr><td>一行命令部署</td><td class="us check">&#x2713;</td><td class="check">&#x2713;</td><td>&#x2716;</td><td>&#x2716;</td></tr>
+<tr><td>Git 自动部署</td><td class="us check">&#x2713;</td><td class="check">&#x2713;</td><td>&#x2716;</td><td>&#x2716;</td></tr>
+<tr><td>预览部署</td><td class="us check">&#x2713;</td><td class="check">&#x2713;</td><td>&#x2716;</td><td>&#x2716;</td></tr>
+<tr><td>服务器面板</td><td class="us check">&#x2713;</td><td>&#x2716;</td><td class="check">&#x2713;</td><td class="check">&#x2713;</td></tr>
+<tr><td>AI 自然语言运维</td><td class="us check">&#x2713;</td><td>&#x2716;</td><td>&#x2716;</td><td>&#x2716;</td></tr>
+<tr><td>一键迁移</td><td class="us check">&#x2713;</td><td>&#x2716;</td><td>&#x2716;</td><td>&#x2716;</td></tr>
+<tr><td>内存占用</td><td class="us">< 50MB</td><td>N/A</td><td>>200MB</td><td>>100MB</td></tr>
+<tr><td>开源协议</td><td class="us">MIT</td><td>闭源</td><td>专有</td><td>GPL3</td></tr>
+</tbody>
+</table>
+</div>
 </section>
 
 <!-- Install -->
 <section id="install">
-  <div class="section-title fade-in">
-    <h2>一分钟上手</h2>
-    <p>三种部署方式，满足不同场景</p>
-  </div>
-  <div class="install-wrap">
-    <div class="install-tabs fade-in">
-      <div class="install-tab active" onclick="switchInstall(this, 'docker')">🐳 Docker（推荐）</div>
-      <div class="install-tab" onclick="switchInstall(this, 'oneclick')">⚡ 一键安装</div>
-      <div class="install-tab" onclick="switchInstall(this, 'source')">📦 源码部署</div>
-    </div>
-
-    <div id="install-docker" class="install-code fade-in">
-<span class="comment"># 只需两步，启动灯塔</span><br>
-git clone https://github.com/adcitra/panel.git<br>
-cd panel && docker compose up -d<br>
-<span class="comment"># 访问 http://your-server:8888</span>
-    </div>
-
-    <div id="install-oneclick" class="install-code fade-in" style="display:none;">
-<span class="comment"># Linux 一键安装（Debian/Ubuntu/CentOS）</span><br>
-curl -sSO https://download.adcitra.cn/install/install_panel.sh<br>
-&& bash install_panel.sh<br>
-<span class="comment"># 安装完成后访问 http://your-server:8888</span>
-    </div>
-
-    <div id="install-source" class="install-code fade-in" style="display:none;">
-<span class="comment"># 源码部署（开发模式）</span><br>
-git clone https://github.com/adcitra/panel.git<br>
-cd panel && pip install -r requirements.txt<br>
-python runserver.py<br>
-<span class="comment"># 访问 http://localhost:8888</span>
-    </div>
-  </div>
+<div class="section-title fade-in"><h2>一分钟上手</h2><p>三种方式，任选其一</p></div>
+<div style="max-width:800px;margin:0 auto">
+<div class="install-tabs fade-in">
+  <div class="install-tab active" onclick="switchTab(this,'docker')">Docker（推荐）</div>
+  <div class="install-tab" onclick="switchTab(this,'cli')">CLI 一键</div>
+  <div class="install-tab" onclick="switchTab(this,'source')">源码</div>
+</div>
+<div id="tab-docker" class="terminal fade-in"><span class="comment"># Docker 部署</span><br><span class="prompt">$</span> <span class="cmd">git clone ... && docker compose up -d</span><br><span class="out">OK 面板: http://localhost:8888</span><br><span class="prompt">$</span> <span class="cmd">adcitra deploy</span><br><span class="out">OK 应用已上线</span></div>
+<div id="tab-cli" class="terminal fade-in" style="display:none"><span class="comment"># 一键安装</span><br><span class="prompt">$</span> <span class="cmd">curl -sSO https://download.adcitra.cn/install.sh && bash install.sh</span><br><span class="out">OK 面板安装完成</span><br><span class="prompt">$</span> <span class="cmd">adcitra deploy --git https://github.com/user/my-app</span><br><span class="out">OK 部署成功</span></div>
+<div id="tab-source" class="terminal fade-in" style="display:none"><span class="comment"># 源码部署</span><br><span class="prompt">$</span> <span class="cmd">git clone ... && pip install -r requirements.txt && python runserver.py</span><br><span class="out">OK http://localhost:8888</span></div>
+</div>
 </section>
 
-<!-- FAQ -->
-<section class="innovation">
-  <div class="section-title fade-in">
-    <h2>常见问题</h2>
-  </div>
-  <div class="faq-grid">
-    <div class="faq-item fade-in" onclick="this.classList.toggle('open')">
-      <div class="faq-question">和宝塔面板是什么关系？<span class="faq-toggle">▼</span></div>
-      <div class="faq-answer">AdCtira灯塔 是一款独立开发的服务器运维面板。在保证功能完整性的基础上，兼容主流服务器管理生态，300+ 应用开箱即用。</div>
-    </div>
-    <div class="faq-item fade-in" onclick="this.classList.toggle('open')">
-      <div class="faq-question">专业版和企业版什么时候上线？<span class="faq-toggle">▼</span></div>
-      <div class="faq-answer">核心功能现在完全免费使用。专业版和企业版正在开发中，预计 Q3 2026 开放。订阅用户将获得 AI 运维、云备份、企业安全策略等增值功能。</div>
-    </div>
-    <div class="faq-item fade-in" onclick="this.classList.toggle('open')">
-      <div class="faq-question">会不会像宝塔一样后来开始收费？<span class="faq-toggle">▼</span></div>
-      <div class="faq-answer">基础版将永远免费。这是我们和宝塔最大的不同——基础功能不阉割、不限制、不恶心用户。收费的是增值服务和云功能，而且价格会比宝塔合理得多。</div>
-    </div>
-    <div class="faq-item fade-in" onclick="this.classList.toggle('open')">
-      <div class="faq-question">有微信群或社区吗？<span class="faq-toggle">▼</span></div>
-      <div class="faq-answer">社区正在筹备中。目前可以通过 GitHub Issues 提交问题和建议。后续会建立论坛、微信群、Discord 等交流渠道。</div>
-    </div>
-  </div>
+<!-- Pricing -->
+<section style="background:rgba(255,255,255,.02)">
+<div class="section-title fade-in"><h2>开放，但不是做慈善</h2><p>合理的定价让产品走得更远</p></div>
+<div class="pricing-grid">
+  <div class="price-card fade-in"><h3>基础版</h3><div class="pr">$0</div><p class="desc">个人开发者/小型项目</p><ul><li>面板核心功能</li><li>CLI 部署工具</li><li>网站/数据库/Docker/SSL</li><li>防火墙 + WAF</li><li>300+ 免费应用</li></ul><a href="#install" class="btn-p">免费使用</a></div>
+  <div class="price-card featured fade-in"><div class="pop">热销</div><h3>专业版</h3><div class="pr">$19<span>/月</span></div><p class="desc">中小企业/专业开发者</p><ul><li>基础版全部功能</li><li>Git 自动部署</li><li>AI 智能运维助手</li><li>云存储自动备份</li><li>预览部署环境</li><li>优先技术支持</li></ul><a class="btn-p" onclick="return alert('即将开放购买')">立即订阅</a></div>
+  <div class="price-card fade-in"><h3>企业版</h3><div class="pr">$99<span>/月</span></div><p class="desc">大型企业/托管服务商</p><ul><li>专业版全部功能</li><li>白标品牌定制</li><li>多用户权限管理</li><li>审计日志 + 合规报告</li><li>专属客户经理</li><li>SLA 保障</li></ul><a class="btn-p" onclick="return alert('请联系商务定制方案')">联系商务</a></div>
+</div>
 </section>
 
 <!-- Footer -->
 <footer>
-  <div class="footer-grid">
-    <div>
-      <h4 style="display:flex;align-items:center;gap:0.5rem;"><span style="width:8px;height:8px;background:var(--amber);border-radius:50%;display:inline-block;box-shadow:0 0 10px var(--amber);"></span>AdCtira灯塔</h4>
-      <p style="color:var(--slate-light);font-size:0.85rem;">让服务器管理像灯塔一样明亮。</p>
-      <p style="color:var(--slate-light);font-size:0.8rem;margin-top:0.5rem;">下一代开源服务器运维面板</p>
-    </div>
-    <div>
-      <h4>产品</h4>
-      <a href="#features">功能特性</a>
-      <a href="#pricing">价格方案</a>
-      <a href="#install">下载安装</a>
-      <a href="#compare">竞品对比</a>
-    </div>
-    <div>
-      <h4>文档</h4>
-      <a href="docs/API.md">API 文档</a>
-      <a href="docs/DEPLOY.md">部署指南</a>
-      <a href="docs/SECURITY.md">安全策略</a>
-      <a href="docs/UPGRADE.md">升级指南</a>
-    </div>
-    <div>
-      <h4>社区</h4>
-      <a href="https://github.com/adcitra/panel" target="_blank">GitHub (建设中)</a>
-      <a href="#">技术论坛（筹备中）</a>
-      <a href="#">微信群（筹备中）</a>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <p>AdCtira灯塔 Team · 让运维安全高效</p>
-    <p style="margin-top:0.5rem;">© 2026 AdCtira灯塔 Team · 让运维安全高效</p>
-  </div>
+<p>AdCtira灯塔 - 自托管应用部署平台</p>
+<p style="margin-top:8px;font-size:12px">&copy; 2026 AdCtira灯塔 Team &middot; MIT 许可证</p>
 </footer>
 
 <script>
-// Scroll animations
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) entry.target.classList.add('visible');
-  });
-}, { threshold: 0.1 });
+var c=document.getElementById('starfield'),x=c.getContext('2d'),s=[];
+function r(){c.width=innerWidth;c.height=innerHeight}
+function i(){s=[];for(var a=0;a<300;a++)s.push({x:Math.random()*c.width,y:Math.random()*c.height*.7,r:Math.random()*1.5+.3,a:Math.random(),v:Math.random()*.02+.005})}
+function d(){x.clearRect(0,0,c.width,c.height);s.forEach(function(t){t.a+=t.v;var a=(Math.sin(t.a)+1)/2*.8+.2;x.beginPath();x.arc(t.x,t.y,t.r,0,Math.PI*2);x.fillStyle='rgba(255,255,255,'+a+')';x.fill()});requestAnimationFrame(d)}
+r();i();d();window.addEventListener('resize',function(){r();i()});
 
-document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+var o=new IntersectionObserver(function(e){e.forEach(function(e){if(e.isIntersecting)e.target.classList.add('show')})},{threshold:.1});
+document.querySelectorAll('.fade-in').forEach(function(e){o.observe(e)});
 
-// Install tabs
-function switchInstall(el, id) {
-  document.querySelectorAll('.install-tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  document.querySelectorAll('.install-code').forEach(c => c.style.display = 'none');
-  document.getElementById('install-' + id).style.display = 'block';
-}
+function switchTab(el,id){document.querySelectorAll('.install-tab').forEach(function(t){t.classList.remove('active')});el.classList.add('active');document.querySelectorAll('.terminal').forEach(function(c){c.style.display='none'});document.getElementById('tab-'+id).style.display='block'}
 </script>
 </body>
 </html>
-
-

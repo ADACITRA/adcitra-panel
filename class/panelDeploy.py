@@ -1,6 +1,6 @@
 #coding: utf-8
 """部署管理模块 — 集成到面板 /deploy 路由"""
-import os, json, subprocess, threading
+import os, json, subprocess, threading, shlex, re
 from pathlib import Path
 
 CONFIG_DIR = Path.home() / ".adcitra"
@@ -15,9 +15,12 @@ def load_deploys():
 def save_deploys(d):
     DEPLOYS_FILE.write_text(json.dumps(d, indent=2, ensure_ascii=False))
 
+def _sanitize_name(s):
+    return re.sub(r'[^a-zA-Z0-9_\-]', '', s)
+
 def deploy_git(repo_url, branch="main", name=""):
-    name = name or repo_url.rstrip("/").split("/")[-1].replace(".git","")
-    preview = branch not in ("main","master")
+    name = _sanitize_name(name or repo_url.rstrip("/").split("/")[-1].replace(".git",""))
+    preview = branch not in ("main","master") and len(branch) < 100
     dn = f"{name}-{branch}" if preview else name
     dd = f"/www/wwwroot/{dn}"
     
@@ -31,6 +34,7 @@ def deploy_git(repo_url, branch="main", name=""):
     domain = f"{dn}.test"
     port = sum(ord(c) for c in dn) % 1000 + 8000
     os.makedirs("/www/server/panel/vhost/nginx", exist_ok=True)
+    dn = _sanitize_name(dn)
     nc = f"""server {{
     listen 80;
     server_name {domain};
