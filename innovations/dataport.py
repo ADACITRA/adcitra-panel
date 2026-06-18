@@ -338,6 +338,79 @@ def list_backups():
 # ==========================================
 # 主入口
 # ==========================================
+
+
+# ===== Cloud Backup (AES-256-GCM + HTTP) =====
+from Crypto.Cipher import AES
+import requests, configparser
+
+CLOUD_CONF = os.path.expanduser("~/.adcitra/cloud.conf")
+
+def _ck(token):
+    return hashlib.sha256(token.encode()).digest()
+
+def _enc(src, dst, token):
+    k = _ck(token); c = AES.new(k, AES.MODE_GCM)
+    with open(src, 'rb') as f: d = f.read()
+    ct, tag = c.encrypt_and_digest(d)
+    with open(dst, 'wb') as f: f.write(c.nonce + tag + ct)
+    return dst
+
+def _dec(src, dst, token):
+    k = _ck(token)
+    with open(src, 'rb') as f: n = f.read(16); t = f.read(16); ct = f.read()
+    c = AES.new(k, AES.MODE_GCM, nonce=n); d = c.decrypt_and_verify(ct, t)
+    with open(dst, 'wb') as f: f.write(d)
+    return dst
+
+def _lc():
+    cfg = configparser.ConfigParser(); cfg.read(CLOUD_CONF)
+    return {'server': cfg.get('cloud','server',fallback='http://localhost:7890'),'token': cfg.get('cloud','token',fallback='admin')}
+
+def _sc(srv, tok):
+    os.makedirs(os.path.dirname(CLOUD_CONF), exist_ok=True)
+    cfg = configparser.ConfigParser(); cfg['cloud'] = {'server':srv,'token':tok}
+    with open(CLOUD_CONF, 'w') as f: cfg.write(f)
+
+def do_cloud_backup():
+    conf = _lc(); header('云备份')
+    local = do_export('/tmp/adcitra-cloud-tmp')
+    enc = local + '.enc'; ok(f'加密: {enc}')
+    _enc(local, enc, conf['token']); os.remove(local)
+    ok('上传中...')
+    with open(enc, 'rb') as f:
+        r = requests.post(f"{conf['server']}/api/backup", files={'file':f}, headers={'X-Token':conf['token']})
+    os.remove(enc)
+    if r.status_code == 200:
+        ok(f"完成 ID: {r.json().get('id','?')}")
+    else:
+        fail(f'上传失败: {r.text}')
+
+def do_cloud_restore(bid):
+    conf = _lc(); header(f'恢复: {bid}')
+    ok('下载中...')
+    r = requests.get(f"{conf['server']}/api/backup/{bid}", headers={'X-Token':conf['token']}, stream=True)
+    if r.status_code != 200: fail(f'下载失败: {r.text}'); return
+    ep = f'/tmp/adcitra-restore-{bid}.enc'
+    with open(ep, 'wb') as f: f.write(r.content)
+    ok('解密中...'); dp = ep.replace('.enc','.tar.gz')
+    _dec(ep, dp, conf['token']); os.remove(ep)
+    ok('导入中...'); do_import(dp); os.remove(dp)
+
+def do_cloud_list():
+    conf = _lc(); header('远程备份')
+    r = requests.get(f"{conf['server']}/api/backup", headers={'X-Token':conf['token']})
+    if r.status_code != 200: fail(f'获取失败: {r.text}'); return
+    bl = r.json().get('backups',[])
+    if not bl: warn('暂无'); return
+    for b in bl: print(f"  {b['id']}  {b.get('created_at','')[:19].replace('T',' ')}  {b['size']/1024/1024:.1f}MB")
+
+def do_cloud_config():
+    print()
+    srv = input('  备份服务器 (http://ip:7890): ').strip()
+    tok = input('  API Token: ').strip()
+    if srv and tok: _sc(srv, tok); ok(f'已保存: {CLOUD_CONF}')
+    else: fail('未填写')
 def main():
     import argparse
     parser = argparse.ArgumentParser(description="AdCtira DataPort — 数据随身带")
@@ -351,10 +424,30 @@ def main():
 
     _ = sub.add_parser("list",help="查看备份列表")
 
+    
+    p_bu = sub.add_parser("backup", help="导出+加密+上传云备份")
+    p_rs = sub.add_parser("restore", help="下载+解密+恢复")
+    p_rs.add_argument("backup_id", help="备份ID")
+    p_rm = sub.add_parser("remote", help="管理云备份")
+    p_rm.add_argument("action", choices=["list","config"])
+
+    p_bu = sub.add_parser("backup", help="导出+加密+上传云备份")
+    p_rs = sub.add_parser("restore", help="下载+解密+恢复")
+    p_rs.add_argument("backup_id", help="备份ID")
+
     args = parser.parse_args()
 
     if args.cmd == "export":
         do_export(args.dest)
+    elif args.cmd == "backup":
+        do_cloud_backup()
+    elif args.cmd == "restore":
+        do_cloud_restore(args.backup_id)
+    elif args.cmd == "remote":
+        if args.action == "list":
+            do_cloud_list()
+        elif args.action == "config":
+            do_cloud_config()
     elif args.cmd == "import":
         do_import(args.file)
     elif args.cmd == "list":
