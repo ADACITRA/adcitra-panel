@@ -3760,3 +3760,10 @@ def mailUnsubscribe():
     reg = mailUnsubscribe.mailUnsubscribe()
     defs = ('Unsubscribe', 'Subscribe')
     return publicObject(reg, defs, None, None)
+
+# ========================== 部署管理模块 ====================
+try:
+    from panelDeploy import register_deploy_routes
+    register_deploy_routes(app)
+except Exception as e:
+    pass

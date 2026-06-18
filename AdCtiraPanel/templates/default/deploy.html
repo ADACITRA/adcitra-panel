@@ -1,0 +1,153 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="main-content pb55">
+  <div class="container-fluid">
+    <div class="pos-box bgw mtb15">
+      <div class="tab-list" id="deploy_tabs">
+        <div class="tabs-item active" onclick="switchDeployTab(this,'dashboard')">部署看板</div>
+        <div class="tabs-item" onclick="switchDeployTab(this,'webhook')">Git 接入</div>
+        <div class="tabs-item" onclick="switchDeployTab(this,'manual')">手动部署</div>
+      </div>
+    </div>
+
+    <!-- 看板 -->
+    <div id="view-dashboard" class="tab-view-box">
+      <div style="display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap">
+        <div style="background:linear-gradient(135deg,#667eea,#764ba2);padding:20px 28px;border-radius:12px;color:#fff;flex:1;min-width:140px">
+          <div style="font-size:28px;font-weight:700">{{data["stats"]["total"]}}</div>
+          <div style="opacity:.8;font-size:13px;margin-top:4px">总部署</div>
+        </div>
+        <div style="background:linear-gradient(135deg,#11998e,#38ef7d);padding:20px 28px;border-radius:12px;color:#fff;flex:1;min-width:140px">
+          <div style="font-size:28px;font-weight:700">{{data["stats"]["live"]}}</div>
+          <div style="opacity:.8;font-size:13px;margin-top:4px">运行中</div>
+        </div>
+        <div style="background:linear-gradient(135deg,#f093fb,#f5576c);padding:20px 28px;border-radius:12px;color:#fff;flex:1;min-width:140px">
+          <div style="font-size:28px;font-weight:700">{{data["stats"]["preview"]}}</div>
+          <div style="opacity:.8;font-size:13px;margin-top:4px">预览中</div>
+        </div>
+      </div>
+
+      <div class="bgw" style="border-radius:8px;overflow:hidden">
+        <table class="table table-bordered" style="margin:0">
+          <thead><tr>
+            <th>应用名</th><th>分支</th><th>域名</th><th>状态</th><th>预览</th><th>更新时间</th>
+          </tr></thead>
+          <tbody id="deploy_table">
+            {% if data["deploys"]|length > 0 %}
+              {% for d in data["deploys"]|reverse %}
+              <tr>
+                <td><strong>{{d["name"]}}</strong></td>
+                <td><span class="label label-info">{{d.get("branch","main")}}</span></td>
+                <td><a href="http://{{d["domain"]}}" target="_blank" style="color:#1a8a30">{{d["domain"]}}</a></td>
+                <td><span class="label label-success">{{d.get("status","live")}}</span></td>
+                <td>{% if d.get("preview") %}<span class="label label-primary">预览</span>{% else %}<span class="label label-default">正式</span>{% endif %}</td>
+                <td>{{d.get("deployed_at","")[:19].replace("T"," ")}}</td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <tr><td colspan="6" style="text-align:center;padding:40px;color:#999">
+                暂无部署 &nbsp; <a href="javascript:;" onclick="switchDeployTab(document.querySelector('#deploy_tabs .tabs-item:nth-child(2)'),'webhook')" style="color:#1a8a30">接入 Git 仓库</a>
+              </td></tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Git 接入 -->
+    <div id="view-webhook" class="tab-view-box" style="display:none">
+      <div class="bgw pd15" style="border-radius:8px">
+        <div class="info-title-tips" style="margin-bottom:20px">
+          <p><span class="glyphicon glyphicon-info-sign" style="color:#1a8a30;margin-right:8px"></span>在 GitHub 仓库设置中添加 Webhook，代码推送后自动部署</p>
+        </div>
+        <div class="row">
+          <div class="col-xs-12 col-md-6">
+            <div style="background:#f9f9f9;padding:16px;border-radius:6px;margin-bottom:16px">
+              <div style="font-weight:700;margin-bottom:8px;font-size:14px">Webhook URL</div>
+              <code style="word-break:break-all;display:block;padding:10px;background:#fff;border:1px solid #ddd;border-radius:4px;font-size:13px">
+                http://{{session["address"]}}:8888/deploy/webhook
+              </code>
+            </div>
+            <div style="background:#f9f9f9;padding:16px;border-radius:6px;margin-bottom:16px">
+              <div style="font-weight:700;margin-bottom:8px;font-size:14px">Content Type</div>
+              <code style="padding:4px 8px;background:#fff;border:1px solid #ddd;border-radius:4px">application/json</code>
+            </div>
+            <div style="background:#f9f9f9;padding:16px;border-radius:6px">
+              <div style="font-weight:700;margin-bottom:8px;font-size:14px">Secret (可选)</div>
+              <input type="text" class="form-control" id="webhook_secret" placeholder="留空则不验证" style="max-width:300px">
+              <p style="color:#999;font-size:12px;margin-top:4px">设置后 GitHub 每次推送会带签名验证</p>
+            </div>
+          </div>
+          <div class="col-xs-12 col-md-6">
+            <div style="background:#f9f9f9;padding:16px;border-radius:6px">
+              <div style="font-weight:700;margin-bottom:12px;font-size:14px">配置步骤</div>
+              <ol style="padding-left:20px;line-height:2;color:#555;font-size:13px">
+                <li>打开 GitHub 仓库 → Settings → Webhooks</li>
+                <li>点击 "Add webhook"</li>
+                <li>粘贴上方的 Webhook URL</li>
+                <li>Content type 选择 <code>application/json</code></li>
+                <li>保存后 GitHub 会发送 ping 测试</li>
+                <li>推送代码 → 自动部署到 <code>/www/wwwroot/</code></li>
+                <li>非 main 分支自动创建预览环境</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 手动部署 -->
+    <div id="view-manual" class="tab-view-box" style="display:none">
+      <div class="bgw pd15" style="border-radius:8px;max-width:600px">
+        <div class="info-title-tips" style="margin-bottom:16px">
+          <p><span class="glyphicon glyphicon-cloud-upload" style="color:#1a8a30;margin-right:8px"></span>手动从 Git 仓库部署</p>
+        </div>
+        <div class="form-group">
+          <label>Git 仓库地址</label>
+          <input type="text" class="form-control" id="manual_repo" placeholder="https://github.com/user/repo.git">
+        </div>
+        <div class="form-group">
+          <label>分支</label>
+          <input type="text" class="form-control" id="manual_branch" value="main">
+        </div>
+        <div class="form-group">
+          <label>应用名（留空自动识别）</label>
+          <input type="text" class="form-control" id="manual_name" placeholder="留空自动识别">
+        </div>
+        <button class="btn btn-success" onclick="manualDeploy()">部署</button>
+        <div id="deploy_result" style="margin-top:12px"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+function switchDeployTab(el,view){
+  document.querySelectorAll('#deploy_tabs .tabs-item').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.tab-view-box').forEach(v=>v.style.display='none');
+  document.getElementById('view-'+view).style.display='block';
+}
+function manualDeploy(){
+  var btn=document.querySelector('#view-manual .btn-success');
+  btn.disabled=true;btn.innerHTML='部署中...';
+  var repo=document.getElementById('manual_repo').value;
+  var branch=document.getElementById('manual_branch').value||'main';
+  var name=document.getElementById('manual_name').value;
+  if(!repo){alert('请输入 Git 仓库地址');btn.disabled=false;btn.innerHTML='部署';return}
+  bt.send('/deploy/manual','post',{repo:repo,branch:branch,name:name},function(r){
+    btn.disabled=false;btn.innerHTML='部署';
+    if(r.status){
+      document.getElementById('deploy_result').innerHTML='<div class="alert alert-success">部署成功：<a href="http://'+(r.msg.url||'')+'" target="_blank">'+r.msg.url+'</a></div>';
+      setTimeout(function(){window.location.reload()},2000);
+    }else{
+      document.getElementById('deploy_result').innerHTML='<div class="alert alert-danger">部署失败</div>';
+    }
+  });
+}
+</script>
+{% endblock %}
