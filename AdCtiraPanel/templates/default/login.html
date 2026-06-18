@@ -157,9 +157,16 @@
     </script>
     <link rel="stylesheet" href="/static/css/login.min.css?v=1780568589" type="text/css">
     <script type="module" crossorigin src="/static/js/login.js?v=1780568589"></script>
-  </head>
+<style>
+body{background:#0b1120!important}
+.login-bg,.login-images{background:transparent!important}
+.login-main{background:rgba(19,29,49,.95)!important;border:1px solid rgba(255,255,255,.08)!important;border-radius:12px!important;box-shadow:0 20px 60px rgba(0,0,0,.5)!important}
+.login-svg .logo-left-color,.login-svg .logo-right-color{fill:#f59e0b!important}
+</style>
+</head>
 
-  <body>
+<body>
+<canvas id="ad-stars" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;pointer-events:none"></canvas>
     <div id="app">
       
       <div class="login-bg" id="login-bg">
@@ -380,5 +387,12 @@
     <script src="/static/js/share/jsencrypt.min.js?v=1780568589" type="text/javascript"></script>
     <script src="/static/js/share/md5.js?v=1780568589" type="text/javascript"></script>
     <script src="/static/js/share/qrcode.min.js?v=1780568589" type="text/javascript"></script>
+<script>
+var c=document.getElementById('ad-stars'),x=c.getContext('2d'),s=[];
+function r(){c.width=innerWidth;c.height=innerHeight}
+function i(){s=[];for(var a=0;a<200;a++)s.push({x:Math.random()*c.width,y:Math.random()*c.height*.5,r:Math.random()*1.2+.2,a:Math.random(),v:Math.random()*.02+.005})}
+function d(){x.clearRect(0,0,c.width,c.height);s.forEach(function(t){t.a+=t.v;var a=(Math.sin(t.a)+1)/2*.8+.2;x.beginPath();x.arc(t.x,t.y,t.r,0,Math.PI*2);x.fillStyle='rgba(255,255,255,'+a+')';x.fill()});requestAnimationFrame(d)}
+r();i();d();window.addEventListener('resize',function(){r();i()});
+</script>
 </body>
 </html>
