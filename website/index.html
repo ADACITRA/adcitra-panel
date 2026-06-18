@@ -1,113 +1,137 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AdCtira灯塔 v12 — 全栈部署平台</title>
+<title>AdCtira灯塔 — 自托管部署平台</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--amber:#f59e0b;--amber-l:#fbbf24;--navy:#020617;--slate:#334155;--slate-l:#64748b}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif;background:var(--navy);color:#e2e8f0;overflow-x:hidden}
-#starfield{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;pointer-events:none}
-.grid-bg{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;background-image:linear-gradient(rgba(245,158,11,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(245,158,11,.03) 1px,transparent 1px);background-size:60px 60px;pointer-events:none}
+:root{--bg:#060b18;--bg2:#0c1528;--slate:#1e293b;--blue:#00d4ff;--amber:#f59e0b;--text:#e2e8f0;--text2:#64748b;--glass:rgba(255,255,255,.04);--border:rgba(255,255,255,.06)}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+#particle-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.grid-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(245,158,11,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(245,158,11,.02) 1px,transparent 1px);background-size:50px 50px}
+.noise-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
-/* Lighthouse */
-.lighthouse-wrap{position:absolute;bottom:0;left:50%;transform:translateX(-50%);z-index:2;height:100vh;width:600px;pointer-events:none}
-.tower{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:40px;height:180px;background:repeating-linear-gradient(90deg,#e2e8f0 0,#e2e8f0 12px,#0f172a 12px,#0f172a 24px);clip-path:polygon(5% 0,95% 0,100% 100%,0% 100%)}
-.tower::after{content:"";position:absolute;top:-20px;left:-12px;width:64px;height:24px;background:repeating-linear-gradient(90deg,transparent 0,transparent 8px,rgba(245,158,11,.3) 8px,rgba(245,158,11,.3) 10px);border-radius:4px 4px 0 0;box-shadow:0 0 40px rgba(245,158,11,.6),0 0 80px rgba(245,158,11,.3)}
-.tower::before{content:"";position:absolute;top:-28px;left:-6px;width:52px;height:10px;background:#1e293b;clip-path:polygon(10% 100%,90% 100%,100% 0,0% 0)}
-.beam{position:absolute;top:-60px;left:50%;margin-left:-200px;width:400px;height:900px;z-index:1;background:conic-gradient(from 0deg at 50% 100%,transparent 0deg,rgba(245,158,11,.35) 8deg,rgba(255,255,255,.5) 12deg,rgba(245,158,11,.35) 16deg,transparent 24deg);transform-origin:50% 100%;animation:sweep 7s cubic-bezier(.4,0,.2,1) infinite alternate;filter:blur(6px) brightness(1.3)}
-.beam-glow{position:absolute;top:-60px;left:50%;margin-left:-50px;width:100px;height:200px;z-index:1;background:radial-gradient(ellipse at 50% 0%,rgba(245,158,11,.5) 0%,rgba(245,158,11,.15) 40%,transparent 70%);animation:pulse 3s ease-in-out infinite alternate}
-@keyframes sweep{0%{transform:rotate(-35deg);opacity:.4}50%{opacity:1}100%{transform:rotate(35deg);opacity:.4}}
-@keyframes pulse{0%{opacity:.5;transform:scaleY(.8)}100%{opacity:1;transform:scaleY(1.2)}}
-.ocean{position:absolute;bottom:0;left:0;width:100%;height:120px;z-index:2;background:linear-gradient(to top,#020617 0%,transparent 100%)}
-.ocean::before{content:"";position:absolute;bottom:0;left:-50%;width:200%;height:100%;background:repeating-linear-gradient(90deg,transparent 0,transparent 40px,rgba(245,158,11,.05) 40px,rgba(245,158,11,.05) 42px);animation:wave 8s linear infinite}
-@keyframes wave{0%{transform:translateX(0)}100%{transform:translateX(40px)}}
+/* Beacon */
+.beacon-wrap{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1;pointer-events:none;width:500px;height:500px;opacity:.4}
+.beacon-ring{position:absolute;top:50%;left:50%;border-radius:50%;border:1px solid rgba(0,212,255,.15);transform:translate(-50%,-50%);animation:ping 4s ease-out infinite}
+.beacon-ring:nth-child(1){width:100px;height:100px;animation-delay:0s}
+.beacon-ring:nth-child(2){width:200px;height:200px;animation-delay:1s}
+.beacon-ring:nth-child(3){width:350px;height:350px;animation-delay:2s}
+.beacon-ring:nth-child(4){width:500px;height:500px;animation-delay:3s}
+@keyframes ping{0%{opacity:1;transform:translate(-50%,-50%) scale(0)}60%{opacity:0}100%{opacity:0;transform:translate(-50%,-50%) scale(1)}}
+.beacon-core{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:8px;height:8px;border-radius:50%;background:var(--blue);box-shadow:0 0 30px var(--blue),0 0 60px rgba(0,212,255,.4),0 0 100px rgba(245,158,11,.2)}
+
+/* Nav */
+nav{position:fixed;top:0;width:100%;z-index:100;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;background:rgba(6,11,24,.8);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;letter-spacing:.3px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--blue);box-shadow:0 0 12px var(--blue);animation:pulse-dot 2s ease-in-out infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+.nav-links{display:flex;gap:24px;list-style:none}
+.nav-links a{color:var(--text2);text-decoration:none;font-size:13px;transition:color .3s}
+.nav-links a:hover{color:var(--blue)}
+.nav-cta{padding:8px 20px;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.25);border-radius:999px;color:var(--blue)!important;font-weight:600}
 
 /* Hero */
-.hero{position:relative;z-index:3;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 20px 180px}
-.hero h1{font-size:clamp(2.5rem,6vw,4.5rem);font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:16px}
-.hero h1 span{background:linear-gradient(135deg,#fbbf24,#f59e0b,#d97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero p{font-size:clamp(1rem,2vw,1.2rem);color:var(--slate-l);max-width:580px;margin:0 auto 32px;line-height:1.8}
-.badge{display:inline-block;padding:6px 16px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);border-radius:999px;font-size:13px;color:var(--amber-l);margin-bottom:20px}
-.btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.btn-p{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#0f172a;border-radius:999px;font-weight:700;font-size:15px;text-decoration:none;transition:all .3s}
-.btn-p:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(245,158,11,.35)}
-.btn-s{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:transparent;color:#e2e8f0;border:1px solid #334155;border-radius:999px;font-weight:600;font-size:15px;text-decoration:none;transition:all .3s}
-.btn-s:hover{border-color:var(--amber);color:var(--amber-l)}
+.hero{position:relative;z-index:2;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 20px}
+.hero h1{font-size:clamp(2.2rem,5vw,4rem);font-weight:800;letter-spacing:-.02em;line-height:1.15;margin-bottom:20px}
+.hero h1 .char{display:inline-block;opacity:0;transform:translateY(20px);animation:fadeUp .5s forwards}
+.hero h1 .hl{background:linear-gradient(135deg,var(--blue),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+.hero p{font-size:clamp(1rem,1.5vw,1.15rem);color:var(--text2);max-width:500px;margin:0 auto 36px;line-height:1.8;opacity:0;animation:fadeIn 1s .8s forwards}
+@keyframes fadeIn{to{opacity:1}}
+.btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;opacity:0;animation:fadeIn 1s 1s forwards}
+.btn-p{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:linear-gradient(135deg,var(--blue),#0099cc);color:#fff;border-radius:999px;font-weight:600;font-size:14px;text-decoration:none;transition:all .3s}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,212,255,.3)}
+.btn-s{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:transparent;color:var(--text);border:1px solid rgba(255,255,255,.1);border-radius:999px;font-weight:500;font-size:14px;text-decoration:none;transition:all .3s}
+.btn-s:hover{border-color:var(--blue);color:var(--blue)}
 
 /* Sections */
-section{position:relative;z-index:3;padding:80px 20px}
-.section-title{text-align:center;margin-bottom:60px}
-.section-title h2{font-size:clamp(1.8rem,3vw,2.8rem);font-weight:700;margin-bottom:12px}
-.section-title p{color:var(--slate-l);max-width:560px;margin:0 auto;font-size:15px;line-height:1.7}
+section{position:relative;z-index:2;padding:100px 20px}
+.section-title{text-align:center;margin-bottom:64px}
+.section-title h2{font-size:clamp(1.6rem,2.5vw,2.4rem);font-weight:700;margin-bottom:12px}
+.section-title p{color:var(--text2);max-width:500px;margin:0 auto;font-size:14px;line-height:1.7}
 
-/* Glass Cards */
-.glass-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;max-width:1100px;margin:0 auto}
-.glass{padding:28px 24px;background:rgba(30,41,59,.4);border:1px solid rgba(255,255,255,.06);border-radius:16px;backdrop-filter:blur(12px);transition:all .4s}
-.glass:hover{transform:translateY(-4px);border-color:rgba(245,158,11,.2);box-shadow:0 20px 40px rgba(0,0,0,.4)}
-.glass .icon{font-size:2rem;margin-bottom:12px}.glass h3{font-size:1.1rem;font-weight:600;margin-bottom:8px}.glass p{color:var(--slate-l);font-size:14px;line-height:1.7}
+/* Cards */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;max-width:1050px;margin:0 auto;perspective:1000px}
+.card{padding:28px 24px;background:var(--glass);border:1px solid var(--border);border-radius:14px;backdrop-filter:blur(12px);transition:all .4s;transform-style:preserve-3d}
+.card:hover{border-color:rgba(0,212,255,.2);box-shadow:0 20px 50px rgba(0,0,0,.4)}
+.card .icon{font-size:1.8rem;margin-bottom:12px}
+.card h3{font-size:1rem;font-weight:600;margin-bottom:8px}
+.card p{color:var(--text2);font-size:13px;line-height:1.7}
+
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;max-width:800px;margin:0 auto}
+.stat-box{padding:28px 20px;background:var(--glass);border:1px solid var(--border);border-radius:14px;text-align:center}
+.stat-box .num{font-size:2.2rem;font-weight:800;background:linear-gradient(135deg,var(--blue),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-box .label{color:var(--text2);font-size:13px;margin-top:4px}
 
 /* Terminal */
-.terminal{background:#0c0c1a;border:1px solid #2a2a4a;border-radius:12px;padding:20px;font-family:"SF Mono","Fira Code",monospace;font-size:13px;overflow-x:auto;max-width:700px;margin:24px auto;line-height:1.8}
-.terminal .prompt{color:var(--amber-l)}.terminal .comment{color:#475569;font-style:italic}.terminal .cmd{color:#e2e8f0}.terminal .out{color:#4ade80}
-
-/* Compare */
-.compare-wrap{max-width:1000px;margin:0 auto;overflow-x:auto}
-.compare{width:100%;border-collapse:collapse;font-size:14px}
-.compare th,.compare td{padding:14px 18px;text-align:center;border-bottom:1px solid rgba(255,255,255,.06)}
-.compare th:first-child,.compare td:first-child{text-align:left;color:var(--slate-l)}
-.compare th{font-weight:700;font-size:15px;padding-bottom:20px}.compare .us{color:var(--amber-l);font-weight:600}.compare .check{color:#22c55e}
+.term{background:#030712;border:1px solid rgba(0,212,255,.08);border-radius:12px;padding:20px;font-family:"SF Mono","Fira Code",monospace;font-size:13px;overflow-x:auto;max-width:680px;margin:24px auto;line-height:1.9}
+.term .p{color:var(--blue)}.term .c{color:var(--text2);font-style:italic}.term .cmd{color:#e2e8f0}.term .out{color:#22c55e;border-right:2px solid #22c55e;animation:blink .8s step-end infinite}
+@keyframes blink{50%{border-color:transparent}}
 
 /* Pricing */
-.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;max-width:950px;margin:0 auto}
-.price-card{padding:32px 24px;background:rgba(30,41,59,.4);border:1px solid rgba(255,255,255,.06);border-radius:16px;text-align:center;transition:all .4s;position:relative}
-.price-card.featured{border-color:rgba(245,158,11,.4);box-shadow:0 0 40px rgba(245,158,11,.15);transform:scale(1.04)}
-.price-card.featured .pop{position:absolute;top:-12px;left:50%;transform:translateX(-50%);padding:4px 20px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#0f172a;border-radius:999px;font-size:12px;font-weight:700}
-.price-card h3{font-size:1.2rem;font-weight:700;margin-bottom:4px}
-.price-card .pr{font-size:2.8rem;font-weight:800;margin:12px 0;color:var(--amber-l)}
-.price-card .pr span{font-size:1rem;font-weight:400;color:var(--slate-l)}
-.price-card .desc{color:var(--slate-l);font-size:13px;margin-bottom:20px}
-.price-card ul{list-style:none;text-align:left;margin-bottom:24px}
-.price-card ul li{padding:6px 0;font-size:14px;color:var(--slate-l)}
-.price-card ul li::before{content:"\2713 ";color:#22c55e;font-weight:700}
+.price-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;max-width:900px;margin:0 auto}
+.price-card{padding:32px 24px;background:var(--glass);border:1px solid var(--border);border-radius:14px;text-align:center;transition:all .4s}
+.price-card.feat{border-color:rgba(0,212,255,.3);box-shadow:0 0 40px rgba(0,212,255,.08)}
+.price-card .pop{position:absolute;top:-12px;left:50%;transform:translateX(-50%);padding:4px 20px;background:linear-gradient(135deg,var(--blue),#0099cc);color:#fff;border-radius:999px;font-size:11px;font-weight:700}
+.price-card h3{font-size:1.1rem;font-weight:700;margin-bottom:4px}
+.price-card .pr{font-size:2.6rem;font-weight:800;margin:12px 0;background:linear-gradient(135deg,var(--blue),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.price-card .pr span{font-size:1rem;font-weight:400;color:var(--text2);-webkit-text-fill-color:var(--text2)}
+.price-card .desc{color:var(--text2);font-size:12px;margin-bottom:18px}
+.price-card ul{list-style:none;text-align:left;margin-bottom:20px}
+.price-card ul li{padding:5px 0;font-size:13px;color:var(--text2)}
+.price-card ul li::before{content:"\2713 ";color:var(--blue);font-weight:700}
 .price-card .btn-p{width:100%;justify-content:center}
 
-/* Install */
-.install-tabs{display:flex;gap:8px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
-.install-tab{padding:8px 20px;background:rgba(30,41,59,.5);border:1px solid #334155;border-radius:8px;color:var(--slate-l);cursor:pointer;font-size:14px;transition:all .3s}
-.install-tab.active{border-color:var(--amber);color:var(--amber-l);background:rgba(245,158,11,.1)}
-
 /* Footer */
-footer{position:relative;z-index:3;border-top:1px solid rgba(255,255,255,.06);padding:48px 20px 24px;text-align:center}
-footer p{color:var(--slate-l);font-size:13px;margin:4px 0}
+footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:40px 20px 24px;text-align:center}
+footer p{color:var(--text2);font-size:12px;margin:3px 0}
 
-/* Animations */
-.fade-in{opacity:0;transform:translateY(30px);transition:all .6s ease-out}
-.fade-in.show{opacity:1;transform:translateY(0)}
+/* Scroll Reveal */
+.reveal{opacity:0;transform:translateY(30px);transition:all .7s cubic-bezier(.25,.46,.45,.94)}
+.reveal.show{opacity:1;transform:translateY(0)}
 
-@media(max-width:768px){.lighthouse-wrap{display:none}.price-card.featured{transform:none}.hero{padding:100px 16px 160px}section{padding:60px 16px}}
+@media(max-width:768px){
+  .nav-links{display:none}
+  .hero{padding:100px 16px}
+  section{padding:64px 16px}
+  .beacon-wrap{display:none}
+}
 </style>
 </head>
 <body>
 
-<canvas id="starfield"></canvas>
-<div class="grid-bg"></div>
+<canvas id="particle-canvas"></canvas>
+<div class="grid-overlay"></div>
+<div class="noise-overlay"></div>
 
-<!-- Lighthouse -->
-<div class="lighthouse-wrap">
-  <div class="beam"></div>
-  <div class="beam-glow"></div>
-  <div class="tower"></div>
-  <div class="ocean"></div>
+<!-- Beacon -->
+<div class="beacon-wrap">
+  <div class="beacon-ring"></div>
+  <div class="beacon-ring"></div>
+  <div class="beacon-ring"></div>
+  <div class="beacon-ring"></div>
+  <div class="beacon-core"></div>
 </div>
+
+<!-- Nav -->
+<nav>
+  <div class="logo"><div class="dot"></div>AdCtira</div>
+  <ul class="nav-links">
+    <li><a href="#features">功能</a></li>
+    <li><a href="#install">安装</a></li>
+    <li><a href="#pricing">价格</a></li>
+    <li><a href="#install" class="nav-cta">开始使用</a></li>
+  </ul>
+</nav>
 
 <!-- Hero -->
 <section class="hero">
-<div style="max-width:800px">
-  <div class="badge">AdCtira v12.0 - 全栈部署平台</div>
-  <h1>让服务器部署<br>像 <span>灯塔光束</span> 一样直达</h1>
-  <p>一行命令部署任何应用到自有服务器。<br>从代码到上线，一个平台搞定。<br>部署 + 运维 + 管理，全面覆盖。</p>
+<div style="max-width:700px">
+  <h1 id="hero-title"><span class="hl">从代码</span> 到上线<br>一个平台搞定</h1>
+  <p>部署 + 运维 + 管理。自托管，你拥有全部。</p>
   <div class="btns">
     <a href="#install" class="btn-p">免费开始</a>
     <a href="#features" class="btn-s">了解功能</a>
@@ -115,62 +139,124 @@ footer p{color:var(--slate-l);font-size:13px;margin:4px 0}
 </div>
 </section>
 
+<!-- Stats -->
+<section style="padding:0 20px 60px">
+<div class="stats-grid reveal">
+  <div class="stat-box"><div class="num" data-target="1">0</div><div class="label">命令部署</div></div>
+  <div class="stat-box"><div class="num" data-target="9">0</div><div class="label">框架识别</div></div>
+  <div class="stat-box"><div class="num" data-target="50">0</div><div class="label">MB 面板占用</div></div>
+  <div class="stat-box"><div class="num" data-target="300">0</div><div class="label">+ 免费应用</div></div>
+</div>
+</section>
+
 <!-- Features -->
 <section id="features">
-<div class="section-title fade-in"><h2>一秒部署，一生拥有</h2><p>自托管意味着你永远拥有你的服务器和数据</p></div>
-<div class="glass-grid">
-  <div class="glass fade-in"><div class="icon">&#x1F680;</div><h3>adcitra deploy</h3><p>一行命令，从代码到上线。自动检测框架、生成nginx配置、创建数据库、配置SSL。支持 Laravel/Django/Next.js 等9种框架。</p></div>
-  <div class="glass fade-in"><div class="icon">&#x1F525;</div><h3>Git 自动部署</h3><p>连接 GitHub webhook，推送即部署。非 main 分支自动创建预览环境。自动预览环境，你拥有服务器。</p></div>
-  <div class="glass fade-in"><div class="icon">&#x1F3D7;</div><h3>服务器管理</h3><p>网站/数据库/Docker/SSL/防火墙/文件 - 全套运维能力。300+ 应用一键安装，Nginx/MySQL/PHP 深度管理。</p></div>
-  <div class="glass fade-in"><div class="icon">&#x1F916;</div><h3>AI 自然语言运维</h3><p>"网站访问慢帮我看看" - AI 自动诊断 CPU/内存/磁盘/网络。不点按钮，说人话就行。</p></div>
-  <div class="glass fade-in"><div class="icon">&#x1F504;</div><h3>一键迁移</h3><p>从其他面板无缝迁移到灯塔。网站/数据库/FTP/SSL 全部自动转换路径。其他面板不敢做这个功能，我们做。</p></div>
-  <div class="glass fade-in"><div class="icon">&#x26A1;</div><h3>极简模式</h3><p>面板占用 < 50MB。适合 512MB 低配 VPS、树莓派。友商越做越臃肿，我们反着来。</p></div>
+<div class="section-title reveal"><h2>部署 · 运维 · 管理</h2><p>一个平台，全栈覆盖</p></div>
+<div class="card-grid">
+  <div class="card reveal"><div class="icon">&#x1F680;</div><h3>adcitra deploy</h3><p>一行命令部署任何应用。自动检测框架、生成nginx配置、创建数据库。支持 Laravel/Django/Next.js 等9种框架。</p></div>
+  <div class="card reveal"><div class="icon">&#x1F525;</div><h3>Git 自动部署</h3><p>连接 GitHub webhook，推送即部署。非 main 分支自动创建预览环境。自动预览环境，你拥有全部。</p></div>
+  <div class="card reveal"><div class="icon">&#x1F3D7;</div><h3>服务器管理</h3><p>网站/数据库/Docker/SSL/防火墙/文件 — 全套能力。300+ 应用一键安装，Nginx/MySQL/PHP 深度管理。</p></div>
+  <div class="card reveal"><div class="icon">&#x1F916;</div><h3>AI 自然语言运维</h3><p>"网站访问慢帮我看看" — AI 自动诊断 CPU/内存/磁盘/网络。不点按钮，说人话就行。</p></div>
+  <div class="card reveal"><div class="icon">&#x1F504;</div><h3>一键迁移</h3><p>从其他面板无缝迁移。网站/数据库/FTP/SSL 全部自动转换。其他面板不敢做这个功能，我们做。</p></div>
+  <div class="card reveal"><div class="icon">&#x26A1;</div><h3>极简模式</h3><p>面板占用 < 50MB。适合 512MB 低配 VPS、树莓派。友商越做越臃肿，我们反着来。</p></div>
 </div>
 </section>
 
 <!-- Install -->
 <section id="install">
-<div class="section-title fade-in"><h2>一分钟上手</h2><p>三种方式，任选其一</p></div>
-<div style="max-width:800px;margin:0 auto">
-<div class="install-tabs fade-in">
-  <div class="install-tab active" onclick="switchTab(this,'docker')">Docker（推荐）</div>
-  <div class="install-tab" onclick="switchTab(this,'cli')">CLI 一键</div>
-  <div class="install-tab" onclick="switchTab(this,'source')">源码</div>
-</div>
-<div id="tab-docker" class="terminal fade-in"><span class="comment"># Docker 部署</span><br><span class="prompt">$</span> <span class="cmd">git clone ... && docker compose up -d</span><br><span class="out">OK 面板: http://localhost:8888</span><br><span class="prompt">$</span> <span class="cmd">adcitra deploy</span><br><span class="out">OK 应用已上线</span></div>
-<div id="tab-cli" class="terminal fade-in" style="display:none"><span class="comment"># 一键安装</span><br><span class="prompt">$</span> <span class="cmd">curl -sSO https://download.adcitra.cn/install.sh && bash install.sh</span><br><span class="out">OK 面板安装完成</span><br><span class="prompt">$</span> <span class="cmd">adcitra deploy --git https://github.com/user/my-app</span><br><span class="out">OK 部署成功</span></div>
-<div id="tab-source" class="terminal fade-in" style="display:none"><span class="comment"># 源码部署</span><br><span class="prompt">$</span> <span class="cmd">git clone ... && pip install -r requirements.txt && python runserver.py</span><br><span class="out">OK http://localhost:8888</span></div>
+<div class="section-title reveal"><h2>一分钟上手</h2><p>Docker 部署，一行命令</p></div>
+<div class="term reveal">
+<span class="c"># Docker 一键部署</span><br>
+<span class="p">$</span> <span class="cmd">git clone https://github.com/adcitra/panel.git</span><br>
+<span class="p">$</span> <span class="cmd">cd panel && docker compose up -d</span><br>
+<span class="out">OK 面板: http://localhost:8888</span><br>
+<span class="p">$</span> <span class="cmd">adcitra deploy</span><br>
+<span class="out">OK 应用已上线</span>
 </div>
 </section>
 
 <!-- Pricing -->
-<section style="background:rgba(255,255,255,.02)">
-<div class="section-title fade-in"><h2>开放，但不是做慈善</h2><p>合理的定价让产品走得更远</p></div>
-<div class="pricing-grid">
-  <div class="price-card fade-in"><h3>基础版</h3><div class="pr">$0</div><p class="desc">个人开发者/小型项目</p><ul><li>面板核心功能</li><li>CLI 部署工具</li><li>网站/数据库/Docker/SSL</li><li>防火墙 + WAF</li><li>300+ 免费应用</li></ul><a href="#install" class="btn-p">免费使用</a></div>
-  <div class="price-card featured fade-in"><div class="pop">热销</div><h3>专业版</h3><div class="pr">$19<span>/月</span></div><p class="desc">中小企业/专业开发者</p><ul><li>基础版全部功能</li><li>Git 自动部署</li><li>AI 智能运维助手</li><li>云存储自动备份</li><li>预览部署环境</li><li>优先技术支持</li></ul><a class="btn-p" onclick="return alert('即将开放购买')">立即订阅</a></div>
-  <div class="price-card fade-in"><h3>企业版</h3><div class="pr">$99<span>/月</span></div><p class="desc">大型企业/托管服务商</p><ul><li>专业版全部功能</li><li>白标品牌定制</li><li>多用户权限管理</li><li>审计日志 + 合规报告</li><li>专属客户经理</li><li>SLA 保障</li></ul><a class="btn-p" onclick="return alert('请联系商务定制方案')">联系商务</a></div>
+<section id="pricing" style="background:rgba(255,255,255,.01)">
+<div class="section-title reveal"><h2>定价</h2><p>开放，但不是做慈善</p></div>
+<div class="price-grid">
+  <div class="price-card reveal"><h3>基础版</h3><div class="pr">$0</div><p class="desc">个人/小项目</p><ul><li>面板核心功能</li><li>CLI 部署工具</li><li>网站/数据库/Docker/SSL</li><li>防火墙 + WAF</li><li>300+ 免费应用</li></ul><a href="#install" class="btn-p">免费使用</a></div>
+  <div class="price-card feat reveal" style="position:relative"><div class="pop">推荐</div><h3>专业版</h3><div class="pr">$19<span>/月</span></div><p class="desc">中小企业/开发者</p><ul><li>基础版全部功能</li><li>Git 自动部署</li><li>AI 智能运维</li><li>云备份</li><li>预览部署</li><li>优先支持</li></ul><a class="btn-p" onclick="return alert('即将开放')">订阅</a></div>
+  <div class="price-card reveal"><h3>企业版</h3><div class="pr">$99<span>/月</span></div><p class="desc">大型企业</p><ul><li>专业版全部功能</li><li>白标定制</li><li>多用户</li><li>审计日志</li><li>专属经理</li><li>SLA</li></ul><a class="btn-p" onclick="return alert('联系商务')">联系</a></div>
 </div>
 </section>
 
 <!-- Footer -->
 <footer>
-<p>AdCtira灯塔 - 自托管应用部署平台</p>
-<p style="margin-top:8px;font-size:12px">&copy; 2026 AdCtira灯塔 Team &middot; MIT 许可证</p>
+<p>AdCtira灯塔 — 自托管部署平台</p>
+<p style="margin-top:6px">&copy; 2026 AdCtira Team &middot; MIT</p>
 </footer>
 
 <script>
-var c=document.getElementById('starfield'),x=c.getContext('2d'),s=[];
-function r(){c.width=innerWidth;c.height=innerHeight}
-function i(){s=[];for(var a=0;a<300;a++)s.push({x:Math.random()*c.width,y:Math.random()*c.height*.7,r:Math.random()*1.5+.3,a:Math.random(),v:Math.random()*.02+.005})}
-function d(){x.clearRect(0,0,c.width,c.height);s.forEach(function(t){t.a+=t.v;var a=(Math.sin(t.a)+1)/2*.8+.2;x.beginPath();x.arc(t.x,t.y,t.r,0,Math.PI*2);x.fillStyle='rgba(255,255,255,'+a+')';x.fill()});requestAnimationFrame(d)}
-r();i();d();window.addEventListener('resize',function(){r();i()});
+// Particle Network
+var c=document.getElementById('particle-canvas'),ctx=c.getContext('2d'),p=[],m={x:null,y:null};
+function resize(){c.width=innerWidth;c.height=innerHeight}
+function init(){p=[];for(var i=0;i<120;i++){p.push({x:Math.random()*c.width,y:Math.random()*c.height,vx:(Math.random()-.5)*.5,vy:(Math.random()-.5)*.5,r:Math.random()*1.5+.5})}}
+function draw(){ctx.clearRect(0,0,c.width,c.height);var i,j,dx,dy,dist,alpha;
+for(i=0;i<p.length;i++){
+  var pt=p[i];
+  if(m.x!=null){dx=pt.x-m.x;dy=pt.y-m.y;dist=Math.sqrt(dx*dx+dy*dy);if(dist<150){pt.x-=dx*.003;pt.y-=dy*.003}}
+  pt.x+=pt.vx;pt.y+=pt.vy;
+  if(pt.x<0||pt.x>c.width)pt.vx*=-1;if(pt.y<0||pt.y>c.height)pt.vy*=-1;
+  ctx.beginPath();ctx.arc(pt.x,pt.y,pt.r,0,Math.PI*2);ctx.fillStyle='rgba(0,212,255,'+(Math.random()*.3+.2)+')';ctx.fill();
+  for(j=i+1;j<p.length;j++){
+    var pt2=p[j];dx=pt.x-pt2.x;dy=pt.y-pt2.y;dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist<120){alpha=(1-dist/120)*.3;ctx.beginPath();ctx.moveTo(pt.x,pt.y);ctx.lineTo(pt2.x,pt2.y);ctx.strokeStyle='rgba(0,212,255,'+alpha+')';ctx.lineWidth=.5;ctx.stroke()}
+  }
+}
+requestAnimationFrame(draw)}
+resize();init();draw();window.addEventListener('resize',function(){resize();init()});
+document.addEventListener('mousemove',function(e){m.x=e.clientX;m.y=e.clientY});
 
-var o=new IntersectionObserver(function(e){e.forEach(function(e){if(e.isIntersecting)e.target.classList.add('show')})},{threshold:.1});
-document.querySelectorAll('.fade-in').forEach(function(e){o.observe(e)});
+// Counters
+var counted=false;
+function countUp(){
+  document.querySelectorAll('.num[data-target]').forEach(function(el){
+    var target=parseInt(el.dataset.target);var current=0;var step=Math.max(1,Math.floor(target/40));
+    function tick(){current+=step;if(current>=target){el.textContent=target+(target>=50?'+':'')}else{el.textContent=current;requestAnimationFrame(tick)}}
+    tick()
+  })
+}
 
-function switchTab(el,id){document.querySelectorAll('.install-tab').forEach(function(t){t.classList.remove('active')});el.classList.add('active');document.querySelectorAll('.terminal').forEach(function(c){c.style.display='none'});document.getElementById('tab-'+id).style.display='block'}
+// Scroll reveal
+var observer=new IntersectionObserver(function(entries){
+  entries.forEach(function(entry){
+    if(entry.isIntersecting){
+      entry.target.classList.add('show');
+      if(!counted&&entry.target.classList.contains('stats-grid')){counted=true;countUp()}
+    }
+  })
+},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(function(el){observer.observe(el)});
+
+// Hero chars animation
+(function(){
+  var h1=document.getElementById('hero-title');
+  var text=h1.textContent;h1.innerHTML='';
+  for(var i=0;i<text.length;i++){
+    var s=document.createElement('span');s.className='char';s.textContent=text[i];
+    if(text[i]==' '){s.innerHTML='&nbsp;'}
+    s.style.animationDelay=(i*.04)+'s';
+    if(text[i]==='从'||text[i]==='代'||text[i]==='码'||text[i]==='到'||text[i]==='上'||text[i]==='线'||text[i]==='一'||text[i]==='个'||text[i]==='平'||text[i]==='台'||text[i]==='搞'||text[i]==='定'||text[i]===' '){}
+    h1.appendChild(s)
+  }
+})();
+
+// 3D Card tilt
+document.querySelectorAll('.card').forEach(function(card){
+  card.addEventListener('mousemove',function(e){
+    var rect=this.getBoundingClientRect();
+    var x=e.clientX-rect.left;var y=e.clientY-rect.top;
+    var cx=rect.width/2;var cy=rect.height/2;
+    var rx=(y-cy)/cy*8;var ry=(cx-x)/cx*8;
+    this.style.transform='rotateX('+rx+'deg) rotateY('+ry+'deg)'
+  });
+  card.addEventListener('mouseleave',function(){this.style.transform='rotateX(0deg) rotateY(0deg)'})
+});
 </script>
 </body>
 </html>
-
