@@ -1,0 +1,47 @@
+﻿{
+  "version": "1.0",
+  "brand": "AdCtira灯塔",
+  "mode": "lightweight",
+  "description": "极简高性能模式 - 面板占用 < 50MB 内存",
+  "features": {
+    "dashboard": { "enabled": true, "refresh_interval": 60 },
+    "site_manager": { "enabled": true },
+    "database": { "enabled": true },
+    "ftp": { "enabled": false, "note": "按需启用，减少进程开销" },
+    "docker": { "enabled": false, "note": "按需启用，Docker daemon 占用较大" },
+    "monitoring": { "enabled": true, "history_days": 1, "note": "仅保留1天历史，减少磁盘IO" },
+    "firewall": { "enabled": true },
+    "waf": { "enabled": false, "note": "按需启用，减少内存占用" },
+    "files": { "enabled": true },
+    "logs": { "enabled": true, "retention_days": 3, "note": "日志保留3天" },
+    "ssl": { "enabled": true },
+    "mail": { "enabled": false, "note": "按需启用" },
+    "terminal": { "enabled": false, "note": "通过SSH客户端连接以节省资源" },
+    "ai": { "enabled": false, "note": "AI功能需要额外资源" },
+    "node_manager": { "enabled": false, "note": "单机模式下可关闭" },
+    "cron": { "enabled": true },
+    "soft_store": { "enabled": true },
+    "plugin_system": { "enabled": false, "note": "按需启用" }
+  },
+  "performance": {
+    "worker_processes": 1,
+    "thread_pool_size": 2,
+    "cache_enabled": true,
+    "cache_size_mb": 10,
+    "log_level": "warning",
+    "db_optimize": true,
+    "disable_debug": true,
+    "session_timeout_minutes": 120
+  },
+  "known_limits": {
+    "max_sites": 50,
+    "max_databases": 20,
+    "max_concurrent_tasks": 3
+  },
+  "target_environment": [
+    "低配VPS (512MB RAM)",
+    "树莓派/ARM设备",
+    "内网开发服务器",
+    "学习/测试环境"
+  ]
+}
