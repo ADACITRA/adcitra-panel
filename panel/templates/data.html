@@ -1,0 +1,15 @@
+﻿{% extends "layout.html" %}
+{% block content %}
+<h2>数据管理</h2>
+<div class="card" style="max-width:800px">
+<p style="margin-bottom:16px;color:#94a3b8">导出全部面板数据（网站/数据库/配置/SSL），或从备份恢复。</p>
+<div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+<button class="btn-act" onclick="runEx()">导出全部数据</button>
+</div>
+<pre id="dt-out" style="background:#030712;border:1px solid rgba(0,212,255,.08);border-radius:8px;padding:16px;font-size:13px;line-height:1.9;min-height:80px;overflow-x:auto;color:#e2e8f0">点击按钮导出数据</pre>
+</div>
+<style>.btn-act{padding:10px 20px;background:linear-gradient(135deg,#00d4ff,#0099cc);border:none;border-radius:8px;color:#fff;font-weight:600;cursor:pointer;font-size:14px}.btn-act:hover{opacity:.9}</style>
+<script>
+function runEx(){document.getElementById('dt-out').textContent='导出中...\n';fetch('/api/data/export').then(r=>r.text()).then(t=>document.getElementById('dt-out').textContent=t)}
+</script>
+{% endblock %}

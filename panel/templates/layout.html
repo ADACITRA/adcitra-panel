@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AdCtira\u706f\u5854 - {{title if title else "\u9762\u677f"}}</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0b1120;color:#e2e8f0;font-family:-apple-system,sans-serif;display:flex;min-height:100vh}
+.sidebar{width:220px;background:rgba(15,23,42,.95);border-right:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100}
+.sidebar .logo{padding:20px;font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,.06)}
+.sidebar .logo .dot{width:8px;height:8px;border-radius:50%;background:#00d4ff;box-shadow:0 0 12px #00d4ff}
+.sidebar nav{padding:8px;flex:1;display:flex;flex-direction:column}
+.sidebar nav a{display:flex;align-items:center;gap:10px;padding:10px 14px;color:#94a3b8;text-decoration:none;border-radius:8px;font-size:14px;transition:all .15s;margin-bottom:2px}
+.sidebar nav a:hover,.sidebar nav a.active{background:rgba(0,212,255,.08);color:#00d4ff}
+.sidebar .spacer{flex:1}
+.sidebar .logout{border-top:1px solid rgba(255,255,255,.06);margin-top:12px;padding-top:12px}
+.main{margin-left:220px;padding:28px;width:100%}
+h2{font-size:20px;font-weight:600;margin-bottom:20px;color:#e2e8f0;letter-spacing:-.3px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:28px}
+.card{background:rgba(19,29,49,.92);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:20px}
+.card .num{font-size:28px;font-weight:700;line-height:1}.card .label{color:#94a3b8;font-size:13px;margin-top:6px}
+.sec{margin-bottom:28px}.sec-title{font-size:15px;font-weight:600;margin-bottom:12px;color:#e2e8f0}
+.tbl-wrap{background:rgba(19,29,49,.92);border:1px solid rgba(255,255,255,.06);border-radius:10px;overflow:hidden;margin-bottom:20px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:10px 14px;text-align:left;border-bottom:1px solid rgba(255,255,255,.06)}
+th{color:#94a3b8;font-weight:600;font-size:11px;text-transform:uppercase;background:rgba(255,255,255,.02)}
+code{background:rgba(0,0,0,.3);padding:2px 8px;border-radius:4px;color:#00d4ff;font-size:13px}
+</style></head>
+<body>
+<div class="sidebar">
+<div class="logo"><div class="dot"></div>AdCtira\u706f\u5854</div>
+<nav>
+<a href="/dashboard" class="{{'active' if active=='dashboard' else ''}}">\u4eea\u8868\u76d8</a>
+<a href="/sites" class="{{'active' if active=='sites' else ''}}">\u7f51\u7ad9</a>
+<a href="/backup" class="{{'active' if active=='backup' else ''}}">\u5907\u4efd</a>
+<a href="/deploy" class="{{'active' if active=='deploy' else ''}}">\u90e8\u7f72</a>
+<a href="/ai-ops" class="{{'active' if active=='ai-ops' else ''}}">AI\u8fd0\u7ef4</a>
+<a href="/migrate" class="{{'active' if active=='migrate' else ''}}">\u8fc1\u79fb</a>
+<a href="/data" class="{{'active' if active=='data' else ''}}">\u6570\u636e</a>
+<div class="spacer"></div>
+<a href="/logout" class="logout">\u9000\u51fa</a>
+</nav></div>
+<div class="main">{% block content %}{% endblock %}</div></body></html>

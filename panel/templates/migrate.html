@@ -1,0 +1,14 @@
+﻿{% extends "layout.html" %}
+{% block content %}
+<h2>一键迁移</h2>
+<div class="card" style="max-width:800px">
+<p style="margin-bottom:16px;color:#94a3b8">从其他面板（宝塔等）无缝迁移网站、数据库、配置到 AdCtira灯塔。</p>
+<p style="margin-bottom:16px;color:#94a3b8">前置条件：服务器上已安装原面板。</p>
+<div style="margin-bottom:16px"><button class="btn-act" onclick="runMg()">开始迁移</button></div>
+<pre id="mg-out" style="background:#030712;border:1px solid rgba(0,212,255,.08);border-radius:8px;padding:16px;font-size:13px;line-height:1.9;min-height:80px;overflow-x:auto;color:#e2e8f0">点击按钮开始从其他面板迁移</pre>
+</div>
+<style>.btn-act{padding:10px 20px;background:linear-gradient(135deg,#00d4ff,#0099cc);border:none;border-radius:8px;color:#fff;font-weight:600;cursor:pointer;font-size:14px}.btn-act:hover{opacity:.9}</style>
+<script>
+function runMg(){document.getElementById('mg-out').textContent='迁移中...\n';fetch('/api/migrate/run').then(r=>r.text()).then(t=>document.getElementById('mg-out').textContent=t)}
+</script>
+{% endblock %}

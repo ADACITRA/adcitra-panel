@@ -1,0 +1,17 @@
+﻿{% extends "layout.html" %}
+{% block content %}
+<h2>一键部署</h2>
+<div class="card" style="max-width:800px">
+<div style="margin-bottom:12px"><input id="dp-repo" type="text" placeholder="Git仓库地址" style="width:100%;padding:10px;background:rgba(15,23,42,.8);border:1px solid rgba(255,255,255,.08);border-radius:8px;color:#e2e8f0;font-size:14px;margin-bottom:10px"></div>
+<div style="display:flex;gap:10px;margin-bottom:16px">
+<input id="dp-branch" type="text" value="main" style="flex:1;padding:10px;background:rgba(15,23,42,.8);border:1px solid rgba(255,255,255,.08);border-radius:8px;color:#e2e8f0;font-size:14px">
+<button class="btn-act" onclick="runDp()">部署</button>
+</div>
+<pre id="dp-out" style="background:#030712;border:1px solid rgba(0,212,255,.08);border-radius:8px;padding:16px;font-size:13px;line-height:1.9;min-height:80px;overflow-x:auto;color:#e2e8f0">输入Git仓库地址点击部署</pre>
+</div>
+<style>.btn-act{padding:10px 20px;background:linear-gradient(135deg,#00d4ff,#0099cc);border:none;border-radius:8px;color:#fff;font-weight:600;cursor:pointer;font-size:14px}.btn-act:hover{opacity:.9}</style>
+<script>
+function runDp(){const r=document.getElementById('dp-repo').value;const b=document.getElementById('dp-branch').value;if(!r){document.getElementById('dp-out').textContent='请输入Git仓库地址';return}
+document.getElementById('dp-out').textContent='部署中...\n';fetch('/api/deploy/run',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'repo='+encodeURIComponent(r)+'&branch='+encodeURIComponent(b)}).then(r=>r.text()).then(t=>document.getElementById('dp-out').textContent=t)}
+</script>
+{% endblock %}

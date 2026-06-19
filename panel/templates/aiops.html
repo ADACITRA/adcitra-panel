@@ -1,0 +1,14 @@
+﻿{% extends "layout.html" %}
+{% block content %}
+<h2>AI 自然语言运维</h2>
+<div class="card" style="max-width:800px">
+<div style="margin-bottom:12px"><input id="ai-query" type="text" placeholder='说人话，例如：网站访问慢帮我看看' style="width:100%;padding:10px;background:rgba(15,23,42,.8);border:1px solid rgba(255,255,255,.08);border-radius:8px;color:#e2e8f0;font-size:14px"></div>
+<div style="margin-bottom:16px"><button class="btn-act" onclick="runAi()">执行</button></div>
+<pre id="ai-out" style="background:#030712;border:1px solid rgba(0,212,255,.08);border-radius:8px;padding:16px;font-size:13px;line-height:1.9;min-height:80px;overflow-x:auto;color:#e2e8f0">输入运维问题并点击执行</pre>
+</div>
+<style>.btn-act{padding:10px 20px;background:linear-gradient(135deg,#00d4ff,#0099cc);border:none;border-radius:8px;color:#fff;font-weight:600;cursor:pointer;font-size:14px}.btn-act:hover{opacity:.9}</style>
+<script>
+function runAi(){const q=document.getElementById('ai-query').value;if(!q){document.getElementById('ai-out').textContent='请输入问题';return}
+document.getElementById('ai-out').textContent='分析中...\n';fetch('/api/ai-ops/run',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'query='+encodeURIComponent(q)}).then(r=>r.text()).then(t=>document.getElementById('ai-out').textContent=t)}
+</script>
+{% endblock %}
