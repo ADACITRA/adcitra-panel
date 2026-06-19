@@ -1,58 +1,38 @@
-﻿# ============================================
-# AdCtira灯塔 面板 - Docker 镜像
-# 基于宝塔Linux面板复刻
-# ============================================
+﻿# ================================
+# AdCtira\u706f\u5854 \u9762\u677f - Docker \u955c\u50cf
+# ================================
 
 FROM python:3.11-slim
 
-LABEL maintainer="AdCtira Team <team@adcitra.cn>"
-LABEL description="AdCtira灯塔 - 服务器运维面板 Docker 镜像"
-LABEL version="12.0.0"
+LABEL maintainer=\"AdCtira Team <team@adcitra.cn>\"
+LABEL description=\"AdCtira\u706f\u5854 - \u81ea\u6258\u7ba1\u90e8\u7f72\u5e73\u53f0\"
+LABEL version=\"1.0.0\"
 
-WORKDIR /www/adcitra/panel
+WORKDIR /app
 
-# 安装系统依赖
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
-    wget \
-    nginx-light \
-    supervisor \
-    cron \
-    openssl \
-    ca-certificates \
-    procps \
-    git \
+# \u5b89\u88c5\u7cfb\u7edf\u4f9d\u8d56
+RUN apt-get update && apt-get install -y --no-install-recommends \\
+    curl \\
+    ca-certificates \\
+    procps \\
     && rm -rf /var/lib/apt/lists/*
 
-# 复制面板源码
-COPY . /www/adcitra/panel
+# \u590d\u5236\u4ee3\u7801
+COPY . /app
 
-# 安装 Python 依赖
-RUN pip install --no-cache-dir -r /www/adcitra/panel/requirements.txt 2>/dev/null || \
-    pip install --no-cache-dir flask flask-sock flask-session flask-compress \
-        psutil requests paramiko pycryptodome Pillow qrcode gevent pyyaml \
-        bcrypt certifi cffi chardet configparser cryptography dnspython \
-        docker idna IPy Jinja2 MarkupSafe oauthlib packaging pycparser \
-        pymysql PyNaCl pyOpenSSL pyparsing redis rsa six Werkzeug && \
-    echo "依赖安装完成"
+# \u5b89\u88c5 Python \u4f9d\u8d56\u770b\u7248\u9762\u8fd0\u884c\u5c31\u884c
+RUN pip install --no-cache-dir flask psutil flask-session && \\
+    echo \"\u4f9d\u8d56\u5b89\u88c5\u5b8c\u6210\"
 
-# 创建必要目录
-RUN mkdir -p /www/server \
-    /www/wwwlogs \
-    /www/adcitra/panel/logs \
-    /www/adcitra/panel/data \
-    /var/log/supervisor \
-    /var/run
+# \u521b\u5efa\u6570\u636e\u76ee\u5f55
+RUN mkdir -p /app/data /app/panel/templates
 
-# 复制 Supervisor 配置
-COPY docker/supervisord.conf /etc/supervisor/conf.d/adcitra.conf
+# \u66b4\u9732\u7aef\u53e3
+EXPOSE 8888
 
-# 暴露端口
-EXPOSE 8888 80 443
+# \u5065\u5eb7\u68c0\u67e5
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \\
+    CMD curl -f http://localhost:8888/login || exit 1
 
-# 健康检查
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:8888/ || exit 1
-
-# 启动入口
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+# \u542f\u52a8\u6587\u4ef6
+CMD [\"python\", \"panel_app.py\"]

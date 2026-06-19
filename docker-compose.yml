@@ -2,72 +2,16 @@
 
 services:
   adcitra-panel:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: adcitra/panel:12.0.0
+    build: .
+    image: adcitra/panel:1.0.0
     container_name: adcitra-panel
     restart: unless-stopped
     ports:
-      - "8888:8888"    # 面板管理端口
-      - "80:80"        # HTTP
-      - "443:443"      # HTTPS
+      - \"8888:8888\"
     volumes:
-      - ./docker/config:/www/adcitra/panel/config:ro
-      - adcitra_data:/www/adcitra/panel/data
-      - adcitra_logs:/www/adcitra/panel/logs
-      - /var/run/docker.sock:/var/run/docker.sock:ro  # 可选: Docker in Docker
+      - adcitra_data:/app/data
     environment:
       - TZ=Asia/Shanghai
-      - PANEL_PORT=8888
-    networks:
-      - adcitra_net
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8888/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-
-  # 可选: MySQL 数据库 (如面板需要外部数据库)
-  mysql:
-    image: mysql:8.0
-    container_name: adcitra-mysql
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: adcitra_root_pass
-      MYSQL_DATABASE: adcitra_panel
-      MYSQL_USER: adcitra
-      MYSQL_PASSWORD: adcitra_pass
-    volumes:
-      - mysql_data:/var/lib/mysql
-    ports:
-      - "3306:3306"
-    networks:
-      - adcitra_net
-    profiles:
-      - full  # 默认不启动，使用 docker compose --profile full up
-
-  # 可选: Redis 缓存
-  redis:
-    image: redis:7-alpine
-    container_name: adcitra-redis
-    restart: unless-stopped
-    volumes:
-      - redis_data:/data
-    ports:
-      - "6379:6379"
-    networks:
-      - adcitra_net
-    profiles:
-      - full  # 默认不启动
-
-networks:
-  adcitra_net:
-    driver: bridge
 
 volumes:
   adcitra_data:
-  adcitra_logs:
-  mysql_data:
-  redis_data:
