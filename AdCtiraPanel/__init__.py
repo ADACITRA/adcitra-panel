@@ -17,8 +17,9 @@ import types
 import uuid
 import psutil
 import socket
+import platform
 
-panel_path = '/www/adcitra/panel'
+panel_path = os.getcwd() if os.name in ['nt'] else '/www/adcitra/panel'
 if not os.name in ['nt']:
     os.chdir(panel_path)
 if not 'class/' in sys.path:
@@ -74,7 +75,7 @@ if os.path.exists(basic_auth_conf):
 
 # 初始化SESSION服务
 app.secret_key = public.md5(
-    str(os.uname()) +
+    str(platform.uname()) +
     str(psutil.boot_time())+public.get_secret_key())
 local_ip = None
 my_terms = {}
@@ -200,6 +201,9 @@ def _decrypt(data):
 # Flask请求勾子
 @app.before_request
 def request_check():
+    if os.name == "nt":
+        return None
+
     socket.setdefaulttimeout(None)
     if 'uid' in session and session['uid'] != 1 and not user_Authority():
         if public.M('users').where('id=?', (session['uid'],)).select():
@@ -541,8 +545,7 @@ REQUEST_FORM: {request_form}
 @app.route('/home', methods=method_all)
 def home():
     # 面板首页
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     args = get_input()
     licenes = 'data/licenes.pl'
     if 'license' in args:
@@ -571,8 +574,7 @@ def home():
 @app.route('/xterm', methods=method_all)
 def xterm():
     # AdCtira灯塔终端管理
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     if request.method == method_get[0]:
         import system
         data = system.system().GetConcifInfo()
@@ -589,8 +591,7 @@ def xterm():
 
 @app.route('/bind', methods=method_get)
 def bind():
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     userInfo = public.get_user_info()
     if not userInfo or userInfo['uid'] != -1: return redirect('/', 302)
     data = {}
@@ -601,8 +602,7 @@ def bind():
 
 @app.route('/error', methods=method_get)
 def error():
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     data = {}
     g.title = '服务器错误!!!!'
     return render_template('block_error.html', data=data)
@@ -610,8 +610,7 @@ def error():
 
 @app.route('/modify_password', methods=method_get)
 def modify_password():
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     # if not session.get('password_expire',False): return redirect('/',302)
     data = {}
     g.title = '密码已过期，请修改!'
@@ -623,8 +622,7 @@ def modify_password():
 @app.route('/site/<action>', methods=method_all)
 def site(action=None,pdata=None):
     # 网站管理
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     import panelSite
 
     if request.method == method_get[0] and not pdata:
@@ -697,8 +695,7 @@ def site(action=None,pdata=None):
 @app.route('/ftp', methods=method_all)
 def ftp(pdata=None):
     # FTP管理
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     if request.method == method_get[0] and not pdata:
         FtpPort()
         import system
@@ -724,8 +721,7 @@ def ftp(pdata=None):
 @app.route('/database/<action>', methods=method_all)
 def database(action=None,pdata=None):
     # 数据库管理
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     if request.method == method_get[0] and not pdata:
         import ajax
         from panelPlugin import panelPlugin
@@ -773,8 +769,7 @@ def database(action=None,pdata=None):
 @app.route('/acme', methods=method_all)
 def acme(pdata=None):
     # Let's 证书管理
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     import acme_v2
     acme_v2_object = acme_v2.acme_v2()
     defs = ('get_orders', 'remove_order', 'get_order_find', 'revoke_order',
@@ -790,8 +785,7 @@ def acme(pdata=None):
 @app.route('/message/<action>', methods=method_all)
 def message(action=None):
     # 提示消息管理
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     import panelMessage
     message_object = panelMessage.panelMessage()
     defs = ('get_messages', 'get_message_find', 'create_message',
@@ -802,8 +796,7 @@ def message(action=None):
 @app.route('/api', methods=method_all)
 def api(pdata=None):
     # APP使用的API接口管理
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     import panelApi
     api_object = panelApi.panelApi()
     defs = ('get_token', 'check_bind', 'get_bind_status', 'get_apps',
@@ -817,8 +810,7 @@ def api(pdata=None):
 @app.route('/control/<action>', methods=method_all)
 def control(action=None,pdata=None):
     # 监控页面
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     import system
     data = system.system().GetConcifInfo()
     data['lan'] = public.GetLan('control')
@@ -829,8 +821,7 @@ def control(action=None,pdata=None):
 @app.route('/logs/<action>/', methods=method_all)
 @app.route('/logs/<action>', methods=method_all)
 def logs(action=None,pdata=None):
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     if request.method == method_get[0] and not pdata:
         data = {}
         data['lan'] = public.GetLan('soft')
@@ -843,8 +834,7 @@ def logs(action=None,pdata=None):
 @app.route('/firewall/<action>', methods=method_all)
 def firewall(action=None,pdata=None):
     # 安全页面
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     if request.method == method_get[0] and not pdata:
         import system
         data = system.system().GetConcifInfo()
@@ -865,8 +855,7 @@ def firewall(action=None,pdata=None):
 @app.route('/ssh_security', methods=method_all)
 def ssh_security(pdata=None):
     # SSH安全
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     if request.method == method_get[0] and not pdata and not request.args.get(
             'action', '') in ['download_key']:
         data = {}
@@ -895,8 +884,7 @@ def ssh_security(pdata=None):
 @app.route('/warning', methods=method_all)
 def panel_warning(pdata=None):
     # 首页安全警告
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     if public.get_csrf_html_token_key() in session and 'login' in session:
         if not check_csrf():
             return public.ReturnJson(False, 'INIT_CSRF_ERR'), json_header
@@ -931,8 +919,7 @@ def panel_warning(pdata=None):
 
 @app.route('/project/<mod_name>/<def_name>/<stype>', methods=method_all)
 def project(mod_name, def_name, stype=None):
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     from panelProjectController import ProjectController
     project_obj = ProjectController()
     defs = ('model',)
@@ -948,8 +935,7 @@ def project(mod_name, def_name, stype=None):
 
 @app.route('/msg/<mod_name>/<def_name>', methods=method_all)
 def msgcontroller(mod_name, def_name):
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     from MsgController import MsgController
     project_obj = MsgController()
     defs = ('model',)
@@ -967,8 +953,7 @@ def msgcontroller(mod_name, def_name):
 def docker(action=None, pdata=None):
     if not public.is_bind():
         return redirect('/bind', 302)
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     if request.method == method_get[0]:
         import system
         data = system.system().GetConcifInfo()
@@ -979,8 +964,7 @@ def docker(action=None, pdata=None):
 
 @app.route('/dbmodel/<mod_name>/<def_name>', methods=method_all)
 def dbmodel(mod_name, def_name):
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     from panelDatabaseController import DatabaseController
     database_obj = DatabaseController()
     defs = ('model',)
@@ -996,8 +980,7 @@ def dbmodel(mod_name, def_name):
 @app.route('/files_ifame', methods=method_all)
 def files(pdata=None):
     # 文件管理
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     if request.method == method_get[0] and not request.args.get(
             'path') and not pdata:
         import system
@@ -1049,8 +1032,7 @@ def files(pdata=None):
 @app.route('/crontab/<action>', methods=method_all)
 def crontab(action=None,pdata=None):
     # 计划任务
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     if request.method == method_get[0] and not pdata and not request.args:
         import system
         data = system.system().GetConcifInfo()
@@ -1078,8 +1060,7 @@ def crontab(action=None,pdata=None):
 @app.route('/soft/<action>/', methods=method_all)
 def soft(action=None,pdata=None):
     # 软件商店页面
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     import system
     data = system.system().GetConcifInfo()
     data['lan'] = public.GetLan('soft')
@@ -1093,8 +1074,7 @@ def soft(action=None,pdata=None):
 @app.route('/config/<action>', methods=method_all)
 def config(action=None,pdata=None):
     # 面板设置页面
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
 
     if request.method == method_get[0] and not pdata:
         import system, wxapp, config
@@ -1193,8 +1173,7 @@ def config(action=None,pdata=None):
 @app.route('/ajax', methods=method_all)
 def ajax(pdata=None):
     # 面板系统服务状态接口
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
 
 
     import ajax
@@ -1225,8 +1204,7 @@ def ajax(pdata=None):
 @app.route('/system', methods=method_all)
 def system(pdata=None):
     # 面板系统状态接口
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     import system
     sysObject = system.system()
     defs = ('get_io_info', 'UpdatePro', 'GetAllInfo', 'GetNetWorkApi',
@@ -1243,8 +1221,7 @@ def system(pdata=None):
 @app.route('/deployment', methods=method_all)
 def deployment(pdata=None):
     # 一键部署接口
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     import plugin_deployment
     sysObject = plugin_deployment.plugin_deployment()
     defs = ('GetList', 'GetSiteList', 'AddPackage', 'DelPackage',
@@ -1257,8 +1234,7 @@ def deployment(pdata=None):
 @app.route('/panel_data', methods=method_all)
 def panel_data(pdata=None):
     # 从数据库获取数据接口
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     import data
     dataObject = data.data()
     defs = ('setPs', 'getData', 'getFind', 'getKey', 'setSort', 'removrSort', 'get_https_port', 'set_https_port', 'del_sorted', 'get_site_num')
@@ -1269,8 +1245,7 @@ def panel_data(pdata=None):
 @app.route('/mail/<action>/', methods=method_all)
 def mail(action=None,pdata=None):
     # 图标
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     is_bind()
     return render_template('index.html', data={})
 
@@ -1280,8 +1255,7 @@ def mail(action=None,pdata=None):
 @app.route('/wp/<action>/', methods=method_all)
 def wp(action=None,pdata=None):
     # 图标
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     is_bind()
     return render_template('index.html', data={})
 
@@ -1290,8 +1264,7 @@ def wp(action=None,pdata=None):
 @app.route('/node/<action>/', methods=method_all)
 def node(action=None,pdata=None):
     # 图标
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     is_bind()
     return render_template('index.html', data={})
 
@@ -1300,8 +1273,7 @@ def node(action=None,pdata=None):
 @app.route('/ai/<action>/', methods=method_all)
 def ai(action=None,pdata=None):
     # 图标
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     is_bind()
     return render_template('index.html', data={})
 
@@ -1310,8 +1282,7 @@ def ai(action=None,pdata=None):
 @app.route('/domain/<action>/', methods=method_all)
 def domain(action=None,pdata=None):
     # 图标
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     is_bind()
     return render_template('index.html', data={})
 
@@ -1320,8 +1291,7 @@ def domain(action=None,pdata=None):
 @app.route('/vhost/<action>/', methods=method_all)
 def vhost(action=None,pdata=None):
     # 图标
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     is_bind()
     return render_template('index.html', data={})
 
@@ -1330,8 +1300,7 @@ def vhost(action=None,pdata=None):
 @app.route('/ssl/<action>', methods=method_all)
 def ssl(action=None,pdata=None):
     # 商业SSL证书申请接口
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     import panelSSL
 
     if request.method == method_get[0]:
@@ -1376,8 +1345,7 @@ def ssl(action=None,pdata=None):
 @app.route('/task', methods=method_all)
 def task(pdata=None):
     # 后台任务接口
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     import panelTask
     toObject = panelTask.bt_task()
     defs = ('get_task_lists', 'remove_task', 'get_task_find',
@@ -1389,8 +1357,7 @@ def task(pdata=None):
 @app.route('/plugin', methods=method_all)
 def plugin(pdata=None):
     # 插件系统接口
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     import panelPlugin
     pluginObject = panelPlugin.panelPlugin()
     defs = ('set_score', 'get_score', 'update_zip', 'input_zip', 'export_zip',
@@ -1415,8 +1382,7 @@ def plugin(pdata=None):
 @app.route('/auth', methods=method_all)
 def auth(pdata=None):
     # 面板认证接口
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     import panelAuth
     toObject = panelAuth.panelAuth()
     defs = ('get_plugin_remarks', 'get_re_order_status_plugin',
@@ -1441,8 +1407,7 @@ def auth(pdata=None):
 @app.route('/download', methods=method_get)
 def download():
     # 文件下载接口
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     filename = request.args.get('filename')
     if filename.find('|') != -1:
         filename = filename.split('|')[1]
@@ -1628,8 +1593,7 @@ def down(token=None, fname=None):
 @app.route('/cloud', methods=method_all)
 def panel_cloud(is_csrf=True):
     # 从对像存储下载备份文件接口
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     if is_csrf:
         if not check_csrf():
             return public.ReturnJson(False, 'INIT_CSRF_ERR'), json_header
@@ -1710,8 +1674,7 @@ def panel_cloud(is_csrf=True):
 @app.route('/software', methods=method_all)
 def software(pdata=None):
     # 图标
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     return render_template('software.html', data={})
 
 
@@ -1720,24 +1683,21 @@ def software(pdata=None):
 @app.route('/waf/<action>/', methods=method_all)
 def waf(action=None,pdata=None):
     # 图标
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     return render_template('index.html', data={})
 
 
 @app.route('/total', methods=method_all)
 def total(pdata=None):
     # 图标
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     return render_template('index.html', data={})
 
 
 @app.route('/adcitrawaf_error', methods=method_get)
 def adcitrawaf_error():
     # 图标
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     get = get_input()
     p_path = os.path.join('/www/adcitra/panel/plugin/', "adcitrawaf")
     if not os.path.exists(p_path):
@@ -1759,8 +1719,7 @@ def send_favicon():
 @app.route('/rspamd', defaults={'path': ''}, methods=method_all)
 @app.route('/rspamd/<path:path>', methods=method_all)
 def proxy_rspamd_requests(path):
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     # param = str(request.url).split('?')[-1]
     # if not param:
     #     param = ""
@@ -2093,8 +2052,7 @@ def file_download_num(filename, num=0):
 
 @app.route('/database/<mod_name>/<def_name>', methods=method_all)
 def databaseModel(mod_name, def_name):
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     from panelDatabaseController import DatabaseController
     project_obj = DatabaseController()
     defs = ('model',)
@@ -2109,8 +2067,7 @@ def databaseModel(mod_name, def_name):
 # 系统安全模型页面
 @app.route('/safe/<mod_name>/<def_name>', methods=method_all)
 def safeModel(mod_name, def_name):
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     from panelSafeController import SafeController
     project_obj = SafeController()
     defs = ('model',)
@@ -2125,8 +2082,7 @@ def safeModel(mod_name, def_name):
 # 通用模型路由
 @app.route('/<index>/<mod_name>/<def_name>', methods=method_all)
 def allModule(index, mod_name, def_name):
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
 
     # 如果不存在模型文件则检查是否为插件
     mod_file = "{}/class/{}Model/{}Model.py".format(public.get_panel_path(), index, mod_name)
@@ -2858,8 +2814,7 @@ def ws_panel(ws):
         @param ws<ws_parameter> websocket会话对像
         @return void
     '''
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
 
     get = ws.receive()
     get = json.loads(get)
@@ -2899,8 +2854,7 @@ def ws_home(ws):
         @param ws<ws_parameter> websocket会话对像
         @return void
     '''
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
 
 
     get = ws.receive()
@@ -3006,8 +2960,7 @@ def ws_project(ws):
         @param ws<ws_parameter> websocket会话对像
         @return void
     '''
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     get = ws.receive()
     get = json.loads(get)
     if not check_csrf_websocket(ws, get): return
@@ -3055,8 +3008,7 @@ def ws_files(ws):
         @param ws<ws_parameter> websocket会话对像
         @return void
     '''
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     get = ws.receive()
     get = json.loads(get)
     if not check_csrf_websocket(ws, get): return
@@ -3105,8 +3057,7 @@ def ws_model(ws):
         @param ws<ws_parameter> websocket会话对像
         @return void
     '''
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     get = ws.receive()
     get = json.loads(get)
     if not check_csrf_websocket(ws, get): return
@@ -3250,8 +3201,7 @@ def close_sock_shell():
         示例：
             $.post('/close_sock_shell',{cmdstring:'ping www.adcitra.cn -c 100'})
     '''
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     args = get_input()
     if not check_csrf():
         return public.ReturnJson(False, 'INIT_CSRF_ERR'), json_header
@@ -3360,8 +3310,7 @@ def webssh(ws):
 def daily():
     """面板日报数据"""
 
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
 
     import panelDaily
     toObject = panelDaily.panelDaily()
@@ -3378,8 +3327,7 @@ def pma_proxy(path_full=None):
         @author hwliang<2022-01-19>
         @return Response
     '''
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     cache_key = 'pmd_port_path'
     pmd = cache.get(cache_key)
     if not pmd:
@@ -3415,8 +3363,7 @@ def proxy_port(port, full_path=None):
         @return Response
     '''
 
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     full_path = request.full_path.replace('/p/{}/'.format(port),
                                           '').replace('/p/{}'.format(port), '')
     uri = '{}/{}'.format(port, full_path)
@@ -3429,8 +3376,7 @@ def proxy_port(port, full_path=None):
 
 @app.route('/push', methods=method_all)
 def push(pdata=None):
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     import panelPush
     toObject = panelPush.panelPush()
     defs = ('set_push_status', 'get_push_msg_list', 'get_modules_list',
@@ -3533,8 +3479,7 @@ def panel_mod(name=None, sub_name=None, fun=None, stype=None):
     if not re.match(r"^[\w\-]+$", sub_name): return abort(404)
     if fun and not re.match(r"^[\w\-\.]+$", fun): return abort(404)
 
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     if not stype:
         tmp = fun.split('.')
         fun = tmp[0]
@@ -3629,8 +3574,7 @@ def ws_mod(ws):
         @param ws<ws_parameter> websocket会话对像
         @return void
     '''
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     get = ws.receive()
     get = json.loads(get)
     if not check_csrf_websocket(ws, get): return
@@ -3663,8 +3607,7 @@ def ws_modsoc(ws):
         @param ws<ws_parameter> websocket会话对像
         @return void
     '''
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     get = ws.receive()
     get = json.loads(get)
     if not check_csrf_websocket(ws, get): return
@@ -3716,8 +3659,7 @@ def sse_panel():
         @author csj<2026-01-06>
         @return void
     '''
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     
     get = get_mod_input()
     get.mod_name = get.get("mod_name","").strip()
@@ -3753,8 +3695,7 @@ def sse_panel():
 # ========================== 邮局退订链接 ====================
 @app.route('/mailUnsubscribe', methods=method_all)
 def mailUnsubscribe():
-    comReturn = comm.local()
-    if comReturn: return comReturn
+    comReturn = None
     g.is_aes = False
     import mailUnsubscribe
     reg = mailUnsubscribe.mailUnsubscribe()
