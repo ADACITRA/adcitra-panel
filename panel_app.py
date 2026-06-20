@@ -101,3 +101,45 @@ if __name__ == '__main__':
     print(f'  \u5bc6\u7801: {pw}')
     print(f'  \u9762\u677f\u5df2\u542f\u52a8, \u8bb0\u5f97\u653e\u884c\u9632\u706b\u5899 8888 \u7aef\u53e3\n')
     app.run(host='0.0.0.0', port=8888)
+@app.route('/deploy')
+def deploy():
+    if not session.get('login'): return redirect('/login')
+    return render_template('deploy.html', title='Deploy', active='deploy')
+
+@app.route('/ai-ops')
+def ai_ops():
+    if not session.get('login'): return redirect('/login')
+    return render_template('aiops.html', title='AI Ops', active='ai-ops')
+
+@app.route('/migrate')
+def migrate():
+    if not session.get('login'): return redirect('/login')
+    return render_template('migrate.html', title='Migrate', active='migrate')
+
+@app.route('/data')
+def data():
+    if not session.get('login'): return redirect('/login')
+    return render_template('data.html', title='Data', active='data')
+
+# API - 调用 innovations 里的工具
+@app.route('/api/backup/run')
+def api_backup_run():
+    if not session.get('login'): return '未登录'
+    import subprocess, sys
+    r = subprocess.run([sys.executable, 'innovations/dataport.py', 'backup'], capture_output=True, text=True, timeout=120)
+    return (r.stdout + r.stderr)[:5000] or '完成'
+
+@app.route('/api/backup/list')
+def api_backup_list():
+    if not session.get('login'): return '未登录'
+    import subprocess, sys
+    r = subprocess.run([sys.executable, 'innovations/dataport.py', 'remote', 'list'], capture_output=True, text=True, timeout=30)
+    return (r.stdout + r.stderr)[:5000] or '无备份'
+
+@app.route('/api/data/export')
+def api_data_export():
+    if not session.get('login'): return '未登录'
+    import subprocess, sys
+    r = subprocess.run([sys.executable, 'innovations/dataport.py', 'export'], capture_output=True, text=True, timeout=60)
+    return (r.stdout + r.stderr)[:5000] or '导出完成'
+
